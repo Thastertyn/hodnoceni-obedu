@@ -1,0 +1,1 @@
+Kdyz si pullnes projekt tak pro ve frontend dej `npm -i` a pro spusteni stranky `npm start`
