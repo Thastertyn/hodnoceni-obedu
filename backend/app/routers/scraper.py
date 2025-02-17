@@ -16,10 +16,9 @@ INITIAL_URL = f"{BASE_URL}/"
 LOGIN_URL = f"{BASE_URL}/login"
 
 
-
 def fetch_initial_session() -> Dict[str, str]:
     session = requests.Session()
-    response = session.head(INITIAL_URL)
+    session.head(INITIAL_URL)
 
     cookies = session.cookies.get_dict()
 

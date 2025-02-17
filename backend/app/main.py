@@ -4,7 +4,7 @@ from .dependencies import get_token_header
 from .internal import admin
 from .routers import items, users, scraper
 
-app = FastAPI(title="Hodnoceni obědů")
+app = FastAPI(title="Hodnocení obědů")
 
 
 app.include_router(users.router)
