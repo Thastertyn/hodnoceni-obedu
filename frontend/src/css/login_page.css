@@ -1,0 +1,97 @@
+/* Kontejner zabírá celou výšku okna pro rozdělení 50/50 */
+.login-container {
+    display: flex;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Levá část (logo, text) */
+  .left-section {
+    flex: 1;
+    background-color: #fff; /* Bílá */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .logo {
+    width: 150px;
+    margin-bottom: 20px;
+  }
+  
+  .left-section h2 {
+    color: #333;
+    text-align: center;
+    max-width: 250px;
+    line-height: 1.4;
+  }
+  
+  /* Pravá část (tmavé pozadí s formulářem) */
+  .right-section {
+    flex: 1;
+    background-color: #2f3b42; /* Tmavší šedá / modro-šedá */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Přihlašovací formulář uprostřed pravé části */
+  .login-form {
+    background-color: transparent; /* Bez pozadí, nebo lze přidat poloprůhledné */
+    padding: 40px;
+    border-radius: 8px;
+    text-align: center;
+    color: #fff;
+    max-width: 300px;
+    width: 100%;
+  }
+  
+  .login-form h2 {
+    margin-bottom: 10px;
+  }
+  
+  .login-form p {
+    margin-bottom: 20px;
+  }
+  
+  /* Kontejner pro jeden řádek ikona + input */
+  .input-container {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    padding: 0 10px;
+  }
+  
+  .input-container .icon {
+    margin-right: 8px;
+    color: #555; /* Barva emotikon / SVG, pokud použijete Font Awesome, bude jiná */
+  }
+  
+  .input-container input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    padding: 10px 0;
+  }
+  
+  /* Tlačítko pro přihlášení */
+  .login-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #3a8bbb;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .login-button:hover {
+    background-color: #2f7ba3;
+  }
+  

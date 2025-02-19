@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './css/lunch_rating_form.css';
+import '../css/lunch_rating_form.css';
 
 export default function LunchRatingForm({ onClose }) {
   const [taste, setTaste] = useState('');
