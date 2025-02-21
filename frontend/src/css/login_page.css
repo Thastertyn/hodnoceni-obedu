@@ -166,7 +166,13 @@
 
   .input-container {
       border: 2px solid black;
-      margin-bottom: 30px;
+      margin: 10px;
+  }
+
+  .login-button {
+    width: 80%;
+    max-width: 180px;
+    margin-top: 25px;
   }
 }
 

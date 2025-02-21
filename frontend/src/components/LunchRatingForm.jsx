@@ -14,11 +14,15 @@ export default function LunchRatingForm({ onClose }) {
   const getButtonClass = (selectedValue, optionValue) =>
     selectedValue === optionValue ? 'button selected' : 'button';
 
+  // Funkce pro změnu výběru (kliknutím na stejnou možnost ji zrušíš)
+  const toggleSelection = (setState, value, current) => {
+    setState(current === value ? '' : value);
+  };
+
   // Odeslání formuláře
   const handleSubmit = () => {
     const formData = { taste, temperature, portion, soup, dessert, wouldPayMore, feedback };
     console.log('Form data:', formData);
-    // Po odeslání můžete formulář zavřít nebo provést další akce
   };
 
   return (
@@ -28,157 +32,66 @@ export default function LunchRatingForm({ onClose }) {
       </div>
       <h2>Hodnocení</h2>
 
-      {/* Hodnocení chuti */}
-      <div className="section">
-        <h3>Chuť jídla</h3>
-        <button
-          className={getButtonClass(taste, 'Vynikající')}
-          onClick={() => setTaste('Vynikající')}
-        >
-          Vynikající – skvěle dochucené
-        </button>
-        <button
-          className={getButtonClass(taste, 'Průměrné')}
-          onClick={() => setTaste('Průměrné')}
-        >
-          Průměrné – obyčejné, nevýrazné
-        </button>
-        <button
-          className={getButtonClass(taste, 'Mizerné')}
-          onClick={() => setTaste('Mizerné')}
-        >
-          Mizerné – nedochucené, zklamání
-        </button>
-      </div>
+      <div className="sections-container">
+        {/* Hodnocení polévky */}
+        <div className="section">
+          <h3>Hodnocení polévky</h3>
+          <button className={getButtonClass(soup, 'Bez polévky')} onClick={() => toggleSelection(setSoup, 'Bez polévky', soup)}>Bez polévky</button>
+          <button className={getButtonClass(soup, 'Dobrá')} onClick={() => toggleSelection(setSoup, 'Dobrá', soup)}>Dobrá</button>
+          <button className={getButtonClass(soup, 'Průměrná')} onClick={() => toggleSelection(setSoup, 'Průměrná', soup)}>Průměrná</button>
+          <button className={getButtonClass(soup, 'Špatná')} onClick={() => toggleSelection(setSoup, 'Špatná', soup)}>Špatná</button>
+        </div>
 
-      {/* Hodnocení teploty */}
-      <div className="section">
-        <h3>Teplota</h3>
-        <button
-          className={getButtonClass(temperature, 'Studené')}
-          onClick={() => setTemperature('Studené')}
-        >
-          Studené
-        </button>
-        <button
-          className={getButtonClass(temperature, 'Akorát')}
-          onClick={() => setTemperature('Akorát')}
-        >
-          Akorát
-        </button>
-        <button
-          className={getButtonClass(temperature, 'Horké')}
-          onClick={() => setTemperature('Horké')}
-        >
-          Horké
-        </button>
-      </div>
+        {/* Hodnocení dezertu */}
+        <div className="section">
+          <h3>Hodnocení dezertu</h3>
+          <button className={getButtonClass(dessert, 'Bez dezertu')} onClick={() => toggleSelection(setDessert, 'Bez dezertu', dessert)}>Bez dezertu</button>
+          <button className={getButtonClass(dessert, 'Dobrá')} onClick={() => toggleSelection(setDessert, 'Dobrá', dessert)}>Dobrá</button>
+          <button className={getButtonClass(dessert, 'Průměrná')} onClick={() => toggleSelection(setDessert, 'Průměrná', dessert)}>Průměrná</button>
+          <button className={getButtonClass(dessert, 'Špatná')} onClick={() => toggleSelection(setDessert, 'Špatná', dessert)}>Špatná</button>
+        </div>
+        
+        {/* Hodnocení chuti */}
+        <div className="section">
+          <h3>Chuť jídla</h3>
+          <button className={getButtonClass(taste, 'Vynikající')} onClick={() => toggleSelection(setTaste, 'Vynikající', taste)}>Vynikající – skvěle dochucené</button>
+          <button className={getButtonClass(taste, 'Průměrné')} onClick={() => toggleSelection(setTaste, 'Průměrné', taste)}>Průměrné – obyčejné, nevýrazné</button>
+          <button className={getButtonClass(taste, 'Mizerné')} onClick={() => toggleSelection(setTaste, 'Mizerné', taste)}>Mizerné – nedochucené, zklamání</button>
+          <button className={"button"} style={{opacity: 0}}>s</button>
+        </div>
 
-      {/* Hodnocení porce */}
-      <div className="section">
-        <h3>Porce</h3>
-        <button
-          className={getButtonClass(portion, 'Hlad')}
-          onClick={() => setPortion('Hlad')}
-        >
-          Měl jsem hlad
-        </button>
-        <button
-          className={getButtonClass(portion, 'Akorát')}
-          onClick={() => setPortion('Akorát')}
-        >
-          Akorát
-        </button>
-        <button
-          className={getButtonClass(portion, 'Přejedl')}
-          onClick={() => setPortion('Přejedl')}
-        >
-          Přejedl jsem se
-        </button>
-      </div>
+        {/* Hodnocení teploty */}
+        <div className="section">
+          <h3>Teplota</h3>
+          <button className={getButtonClass(temperature, 'Studené')} onClick={() => toggleSelection(setTemperature, 'Studené', temperature)}>Studené</button>
+          <button className={getButtonClass(temperature, 'Akorát')} onClick={() => toggleSelection(setTemperature, 'Akorát', temperature)}>Akorát</button>
+          <button className={getButtonClass(temperature, 'Horké')} onClick={() => toggleSelection(setTemperature, 'Horké', temperature)}>Horké</button>
+          <button className={"button"} style={{opacity: 0}}>s</button>
+        </div>
 
-      {/* Hodnocení polévky */}
-      <div className="section">
-        <h3>Hodnocení polévky</h3>
-        <button
-          className={getButtonClass(soup, 'Bez polévky')}
-          onClick={() => setSoup('Bez polévky')}
-        >
-          Bez polévky
-        </button>
-        <button
-          className={getButtonClass(soup, 'Dobrá')}
-          onClick={() => setSoup('Dobrá')}
-        >
-          Dobrá
-        </button>
-        <button
-          className={getButtonClass(soup, 'Průměrná')}
-          onClick={() => setSoup('Průměrná')}
-        >
-          Průměrná
-        </button>
-        <button
-          className={getButtonClass(soup, 'Špatná')}
-          onClick={() => setSoup('Špatná')}
-        >
-          Špatná
-        </button>
-      </div>
-
-      {/* Hodnocení dezertu */}
-      <div className="section">
-        <h3>Hodnocení dezertu</h3>
-        <button
-          className={getButtonClass(dessert, 'Bez dezertu')}
-          onClick={() => setDessert('Bez dezertu')}
-        >
-          Bez dezertu
-        </button>
-        <button
-          className={getButtonClass(dessert, 'Dobrá')}
-          onClick={() => setDessert('Dobrá')}
-        >
-          Dobrá
-        </button>
-        <button
-          className={getButtonClass(dessert, 'Průměrná')}
-          onClick={() => setDessert('Průměrná')}
-        >
-          Průměrná
-        </button>
-        <button
-          className={getButtonClass(dessert, 'Špatná')}
-          onClick={() => setDessert('Špatná')}
-        >
-          Špatná
-        </button>
+        {/* Hodnocení porce */}
+        <div className="section">
+          <h3>Porce</h3>
+          <button className={getButtonClass(portion, 'Hlad')} onClick={() => toggleSelection(setPortion, 'Hlad', portion)}>Měl jsem hlad</button>
+          <button className={getButtonClass(portion, 'Akorát')} onClick={() => toggleSelection(setPortion, 'Akorát', portion)}>Akorát</button>
+          <button className={getButtonClass(portion, 'Přejedl')} onClick={() => toggleSelection(setPortion, 'Přejedl', portion)}>Přejedl jsem se</button>
+          <button className={"button"} style={{opacity: 0}}>s</button>
+        </div>
       </div>
 
       {/* Checkbox "Ochoten připlatit" */}
       <div className="checkbox-container">
         <label>
-          <input
-            type="checkbox"
-            checked={wouldPayMore}
-            onChange={() => setWouldPayMore(!wouldPayMore)}
-          />
+          <input type="checkbox" checked={wouldPayMore} onChange={() => setWouldPayMore(!wouldPayMore)} />
           Ochoten připlatit
         </label>
       </div>
 
       {/* Zpětná vazba */}
-      <textarea
-        placeholder="Zpětná vazba (dobrovolné)"
-        value={feedback}
-        onChange={(e) => setFeedback(e.target.value)}
-        className="feedback"
-      ></textarea>
+      <textarea className="feedback" placeholder="Zpětná vazba (dobrovolné)" value={feedback} onChange={(e) => setFeedback(e.target.value)}></textarea>
 
       {/* Tlačítko pro odeslání */}
-      <button className="submit-button" onClick={handleSubmit}>
-        Potvrdit hodnocení
-      </button>
+      <button className="submit-button" onClick={handleSubmit}>Potvrdit hodnocení</button>
     </div>
   );
 }

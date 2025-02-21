@@ -1,91 +1,124 @@
 .rating-container {
-    width: 90%;
-    max-width: 400px;
-    margin: auto;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    position: relative;
-    background: #f7f7f7;
-    padding: 20px;
-    border-radius: 10px;
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  position: relative;
+  background: #f7f7f7;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Zavírací tlačítko */
+.form-header {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+}
+
+/* Nadpis */
+h2 {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* 📌 Hlavní grid pro sekce */
+.sections-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 15px;
+  width: 100%;
+  justify-content: center;
+  place-items: center; /* 📌 Poslední řádek sekcí centrovaný */
+}
+
+/* Každá sekce */
+.section {
+  background: #2d2d2d;
+  padding: 15px;
+  border-radius: 15px;
+  text-align: center;
+  width: 100%;
+  max-width: 350px;
+}
+
+/* Nadpisy sekcí */
+h3 {
+  color: white;
+  margin-bottom: 10px;
+}
+
+/* Tlačítka hodnocení */
+.button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  color: white;
+}
+
+/* Vybrané tlačítko */
+.selected {
+  background-color: green;
+}
+
+.button:not(.selected) {
+  background-color: red;
+}
+
+/* 📌 Zmenšená zpětná vazba */
+.feedback {
+  width: 80%; /* Užší než sekce */
+  max-width: 300px;
+  padding: 10px;
+  margin-top: 10px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  background: #f0f0f0;
+  font-size: 14px;
+}
+
+/* 📌 Tlačítko potvrzení */
+.submit-button {
+  width: 60%; /* Menší než input */
+  max-width: 250px;
+  background: green;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* Checkbox */
+.checkbox-container {
+  margin: 10px 0;
+  text-align: left;
+  padding-left: 10px;
+  font-size: 16px;
+}
+
+/* 💻 Responzivní úpravy pro tablety a desktop */
+@media (min-width: 768px) {
+  .sections-container {
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   }
-  
-  .form-header {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .close-button {
-    background: transparent;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #333;
-  }
-  
-  h2 {
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .section {
-    background: #2d2d2d;
-    padding: 15px;
-    border-radius: 10px;
-    margin: 10px 0;
-  }
-  
-  h3 {
-    color: white;
-    margin-bottom: 10px;
-  }
-  
-  .button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    color: white;
-  }
-  
-  .selected {
-    background-color: green;
-  }
-  
-  .button:not(.selected) {
-    background-color: red;
-  }
-  
-  .feedback {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 5px;
-    background: #d3d3d3;
-    font-size: 16px;
-  }
-  
-  .submit-button {
-    width: 100%;
-    background: green;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    margin-top: 10px;
-    cursor: pointer;
-  }
-  
-  .checkbox-container {
-    margin: 10px 0;
-    text-align: left;
-    padding-left: 10px;
-    font-size: 16px;
-  }
-  
+}
