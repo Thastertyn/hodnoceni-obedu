@@ -8,14 +8,14 @@ export default function LoginPage() {
       {/* Levá část */}
       <div className="left-section">
         <img src={logo} alt="logo" className="logo" />
-        <h2>Vítejte v aplikaci pro<br />Hodnocení školních obědů</h2>
+        <p>Vítejte v aplikaci pro<br /><span>Hodnocení školních obědů</span></p>
       </div>
 
       {/* Pravá část */}
       <div className="right-section">
         <div className="login-form">
           <h2>Přihlášení</h2>
-          <p>Zadejte Vaše přihlašovací údaje iCanteen!</p>
+          <p>Zadejte Vaše přihlašovací údaje k iCanteen!</p>
 
           <div className="input-container">
             <span className="icon">👤</span>
