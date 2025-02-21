@@ -1,8 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // Přidej tento import
 import '../css/landing_page.css';
 import logo from '../img/logo.png';
 
-export default function LandingPage({ isLoggedIn, onLoginClick }) {
+export default function LandingPage({ isLoggedIn }) {
+  const navigate = useNavigate(); // Použití hooku pro navigaci
+
   return (
     <div className="landing-page">
       {/* Horní uvítací text */}
@@ -16,22 +19,13 @@ export default function LandingPage({ isLoggedIn, onLoginClick }) {
         <img src={logo} alt="logo" className="logo" />
       </div>
 
-      {/* Podmíněné zobrazení podle přihlášení */}
-      {isLoggedIn ? (
-        <section className="today-meal">
-          <h2>Dnešní oběd</h2>
-          <div className="meal-card">
-            <div className="card-header">
-              <span className="status">Neohodnoceno</span>
-              <span className="date">27.1.2025</span>
-            </div>
-            <p><strong>Oběd 1:</strong> Pizza se šunkou a sýrem, ...</p>
-          </div>
-        </section>
-      ) : (
+      {/* Pokud není uživatel přihlášen, zobrazí se přihlašovací výzva */}
+      {!isLoggedIn && (
         <section className="login-prompt">
           <h2><strong>Přihlaste se</strong> pro hodnocení!</h2>
-          <button className="login-button" onClick={onLoginClick}>Přihlásit se</button>
+          <button className="login-button" onClick={() => navigate('/login')}>
+            Přihlásit se
+          </button>
         </section>
       )}
 

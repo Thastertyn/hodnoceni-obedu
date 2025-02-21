@@ -1,38 +1,27 @@
 import React, { useState } from 'react';
-import LunchRatingForm from './components/LunchRatingForm';
-import LoginPage from './components/LoginPage';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
+import LoginPage from './components/LoginPage';
 
 export default function App() {
-  const [showForm, setShowForm] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
-  const [showLanding, setShowLanding] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    setShowLogin(false);
   };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '20px' }}>
-      {showForm ? (
-        <LunchRatingForm onClose={() => setShowForm(false)} />
-      ) : (
-        <button onClick={() => setShowForm(true)}>Otevřít formulář</button>
-      )}
+    <Router>
+      <Routes>
+        {/* LandingPage jako výchozí stránka */}
+        <Route path="/" element={<LandingPage isLoggedIn={isLoggedIn} />} />
+        
+        {/* Login stránka */}
+        <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
 
-      {showLogin ? (
-        <LoginPage onClose={() => setShowLogin(false)} onLogin={handleLogin} />
-      ) : (
-        <button onClick={() => setShowLogin(true)}>Open Login Page</button>
-      )}
-
-      {showLanding ? (
-        <LandingPage isLoggedIn={isLoggedIn} onLoginClick={() => setShowLogin(true)} />
-      ) : (
-        <button onClick={() => setShowLanding(true)}>Open Landing Page</button>
-      )}
-    </div>
+        {/* Pokud neexistuje route, přesměruj na hlavní stránku */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
   );
 }
