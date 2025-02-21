@@ -7,7 +7,7 @@ export default function LunchRatingForm({ onClose }) {
   const [portion, setPortion] = useState('');
   const [soup, setSoup] = useState('');
   const [dessert, setDessert] = useState('');
-  const [wouldPayMore, setWouldPayMore] = useState(false);
+  const [wouldPayMore, setWouldPayMore] = useState('');
   const [feedback, setFeedback] = useState('');
 
   // Pomocná funkce pro přiřazení třídy tlačítku dle výběru
@@ -77,16 +77,17 @@ export default function LunchRatingForm({ onClose }) {
           <button className={getButtonClass(portion, 'Přejedl')} onClick={() => toggleSelection(setPortion, 'Přejedl', portion)}>Přejedl jsem se</button>
           <button className={"button"} style={{opacity: 0}}>s</button>
         </div>
-      </div>
 
-      {/* Checkbox "Ochoten připlatit" */}
-      <div className="checkbox-container">
-        <label>
-          <input type="checkbox" checked={wouldPayMore} onChange={() => setWouldPayMore(!wouldPayMore)} />
-          Ochoten připlatit
-        </label>
+        {/* Ochoten připlatit */}
+        <div className="section">
+          <h3>Příplatek</h3>
+          <button className={getButtonClass(wouldPayMore, '6Kč - větší porce')} onClick={() => toggleSelection(setWouldPayMore, '6Kč - větší porce', wouldPayMore)}>6Kč - větší porce</button>
+          <button className={getButtonClass(wouldPayMore, '10Kč - dezert (buchta, puding, ...)')} onClick={() => toggleSelection(setWouldPayMore, '10Kč - dezert (buchta, puding, ...)', wouldPayMore)}>10Kč - dezert (buchta, puding, ...)</button>
+          <button className={getButtonClass(wouldPayMore, 'Nejsem ochoten připlatit')} onClick={() => toggleSelection(setWouldPayMore, 'Nejsem ochoten připlatit', wouldPayMore)}>Nejsem ochoten připlatit</button>
+          <button className={"button"} style={{opacity: 0}}>s</button>
+        </div>
       </div>
-
+ 
       {/* Zpětná vazba */}
       <textarea className="feedback" placeholder="Zpětná vazba (dobrovolné)" value={feedback} onChange={(e) => setFeedback(e.target.value)}></textarea>
 

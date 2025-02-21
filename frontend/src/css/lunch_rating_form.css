@@ -75,11 +75,11 @@ h3 {
 
 /* Vybrané tlačítko */
 .selected {
-  background-color: green;
+  background-color: rgb(65, 161, 65);
 }
 
 .button:not(.selected) {
-  background-color: red;
+  background-color: rgb(137, 133, 133);
 }
 
 /* 📌 Zmenšená zpětná vazba */
