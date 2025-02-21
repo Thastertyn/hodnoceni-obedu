@@ -7,6 +7,12 @@ export default function App() {
   const [showForm, setShowForm] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showLanding, setShowLanding] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setShowLogin(false);
+  };
 
   return (
     <div style={{ textAlign: 'center', marginTop: '20px' }}>
@@ -17,13 +23,13 @@ export default function App() {
       )}
 
       {showLogin ? (
-        <LoginPage onClose={() => setShowLogin(false)} />
+        <LoginPage onClose={() => setShowLogin(false)} onLogin={handleLogin} />
       ) : (
         <button onClick={() => setShowLogin(true)}>Open Login Page</button>
       )}
 
       {showLanding ? (
-        <LandingPage onClose={() => setShowLanding(false)} />
+        <LandingPage isLoggedIn={isLoggedIn} onLoginClick={() => setShowLogin(true)} />
       ) : (
         <button onClick={() => setShowLanding(true)}>Open Landing Page</button>
       )}
