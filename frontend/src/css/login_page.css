@@ -1,0 +1,247 @@
+/* Kontejner zabírá celou výšku okna */
+.login-container {
+  display: flex;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Levá část (logo, text) */
+.left-section {
+  flex: 1;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  width: 150px;
+  margin-bottom: 20px;
+}
+
+.left-section p {
+  color: #333;
+  text-align: center;
+  max-width: 310px;
+  line-height: 1.4;
+  font-size: 25px;
+}
+.left-section span {
+  font-weight: bold;
+}
+
+/* Pravá část (formulář) */
+.right-section {
+  flex: 1;
+  background-color: #2f3b42;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Přihlašovací formulář */
+.login-form {
+  background-color: transparent;
+  padding: 40px;
+  border-radius: 8px;
+  text-align: center;
+  color: #fff;
+  max-width: 350px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-form h2 {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.login-form p {
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Inputy */
+.input-container {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  padding: 0 10px;
+  border: 2px solid white; /* Bílý outline pro desktop */
+  width: 100%;
+  max-width: 300px;
+}
+
+.input-container .icon {
+  margin-right: 8px;
+  color: #555;
+}
+
+.input-container input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+  padding: 10px 0;
+}
+
+/* Tlačítko */
+.login-button {
+  width: 70%; /* Užší tlačítko než inputy */
+  max-width: 200px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #2aaae2;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.login-button:hover {
+  background-color: #2287b3;
+}
+
+/* Responzivní styly */
+
+/* Tablet verze */
+@media (max-width: 1024px) {
+  .login-container {
+      flex-direction: column;
+  }
+
+  .left-section {
+      display: flex;
+      flex: 0;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      margin-top: 40px;
+  }
+
+  .logo {
+      width: 100px;
+      margin-bottom: 0;
+      margin-right: 10px;
+  }
+
+  .left-section h2 {
+      max-width: 100%;
+      text-align: left;
+  }
+
+  .right-section {
+      background-color: #fff;
+      flex: none;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 40px;
+  }
+
+  .login-form {
+      color: #333;
+      max-width: 400px;
+  }
+
+  .login-form h2 {
+    font-size: 35px;
+    margin-bottom: 20px;
+}
+
+  .login-form p {
+    font-size: 18px;
+  }
+
+  .input-container {
+      border: 2px solid black;
+      margin: 10px;
+  }
+
+  .login-button {
+    width: 80%;
+    max-width: 180px;
+    margin-top: 25px;
+  }
+}
+
+/* Mobilní verze */
+@media (max-width: 768px) {
+  .login-container {
+      flex-direction: column;
+      justify-content: center;
+  }
+
+  .left-section {
+      display: flex;
+      justify-content: center; /* Centrovaný text */
+      align-items: center;
+      flex: 0;
+      padding: 20px;
+      text-align: center;
+      height: 110px;
+      margin-top: 60px;
+  }
+
+  .logo {
+      display: none; /* Skryje jen logo, ale nechá text */
+  }
+
+  .left-section h2 {
+      text-align: center; /* Centrovaný text na mobilu */
+      max-width: 90%; 
+      font-size: 26px;
+  }
+
+  .right-section {
+      background-color: #fff;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+      padding: 40px 0;
+      margin-bottom: 300px
+      
+  }
+
+  .login-form {
+      color: #333;
+      max-width: 90%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+  }
+
+  .login-form h2 {
+      font-size: 35px;
+  }
+
+  .login-form p {
+    font-size: 20px;
+  }
+
+  .input-container {
+    border: 2px solid black;
+    margin: 10px;
+  }
+
+  .login-button {
+      width: 80%;
+      max-width: 180px;
+      margin-top: 25px;
+  }
+}
