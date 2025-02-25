@@ -9,16 +9,7 @@ async def get_token_header(x_token: Annotated[str, Header()]):
         raise HTTPException(status_code=400, detail="X-Token header invalid")
 
 
-class LoginRequest(BaseModel):
-    username: str
-    password: str
-
-class GenericScrapeRequest(BaseModel):
-    jsessionid: str
-    xsrf_token: str
-
-
-async def get_jsession_cookies(
+async def get_authentication_headers(
     jsessionid: Annotated[str, Header(alias="JSESSIONID")],
     xsrf_token: Annotated[str, Header(alias="XSRF-TOKEN")]
 ) -> Dict[str, str]:
@@ -33,10 +24,6 @@ async def get_jsession_cookies(
         raise HTTPException(status_code=400, detail="XSRF-TOKEN header is required")
 
     return {"JSESSIONID": jsessionid, "XSRF-TOKEN": xsrf_token}
-
-
-async def get_credentials(credentials: LoginRequest = Body(...)):
-    return credentials.dict()
 
 
 async def get_query_token(token: str):
