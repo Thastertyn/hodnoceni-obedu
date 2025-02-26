@@ -85,7 +85,7 @@ h3 {
 /* 📌 Zmenšená zpětná vazba */
 .feedback {
   width: 80%; /* Užší než sekce */
-  max-width: 300px;
+  max-width: 400px;
   padding: 10px;
   margin-top: 10px;
   border: 2px solid #ccc;
