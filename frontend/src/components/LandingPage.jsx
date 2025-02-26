@@ -23,7 +23,7 @@ export default function LandingPage({ isLoggedIn }) {
       {!isLoggedIn && (
         <section className="login-prompt">
           <h2><strong>Přihlaste se</strong> pro hodnocení!</h2>
-          <button className="login-button" onClick={() => navigate('/login')}>
+          <button className="login-button-redir" onClick={() => navigate('/login')}>
             Přihlásit se
           </button>
         </section>
