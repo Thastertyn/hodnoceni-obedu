@@ -1,25 +1,24 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Přidej tento import
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import LogoutModal from './LogoutModal'; // Import nové komponenty
 import '../css/landing_page.css';
 import logo from '../img/logo.png';
 
 export default function LandingPage({ isLoggedIn }) {
-  const navigate = useNavigate(); // Použití hooku pro navigaci
+  const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   return (
     <div className="landing-page">
-      {/* Horní uvítací text */}
       <header className="landing-header">
         <h1>Vítejte v aplikaci,<br/>Hodnocení školních obědů</h1>
         <p>Vyberte si <strong>oběd</strong> a <strong>ohodnoťte</strong> jej!</p>
       </header>
 
-      {/* Logo */}
       <div className="logo-container">
         <img src={logo} alt="logo" className="logo" />
       </div>
 
-      {/* Pokud není uživatel přihlášen, zobrazí se přihlašovací výzva */}
       {!isLoggedIn && (
         <section className="login-prompt">
           <h2><strong>Přihlaste se</strong> pro hodnocení!</h2>
@@ -37,10 +36,13 @@ export default function LandingPage({ isLoggedIn }) {
         <button>
           <span role="img" aria-label="ratings">📊</span>
         </button>
-        <button>
+        <button onClick={() => setShowLogoutModal(true)}>
           <span role="img" aria-label="profile">👤</span>
         </button>
       </nav>
+
+      {/* Modální okno pro odhlášení */}
+      {showLogoutModal && <LogoutModal onClose={() => setShowLogoutModal(false)} />}
     </div>
   );
 }
