@@ -1,10 +1,8 @@
 import logging
 
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 
-from .dependencies import get_token_header
-from .internal import admin
-from .routers import items, users, scraper
+from .routers import scraper
 
 app = FastAPI(title="Hodnocení obědů")
 

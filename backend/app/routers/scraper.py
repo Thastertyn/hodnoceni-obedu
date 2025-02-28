@@ -4,80 +4,34 @@ from bs4 import BeautifulSoup
 from fastapi import APIRouter, HTTPException, Depends
 
 from app.schemas.login_schema import LoginSchema
-from app.schemas.lunch_schema import LunchMenuPerDay
+from app.schemas.lunch_schema import LunchMenuPerDay, LunchItem
+from app.schemas.resposne_schema import LoginResponse
 
 from app.dependencies import get_authentication_headers
 
 router = APIRouter(
     prefix="/scraper",
     tags=["scraper"],
-    responses={404: {"description": "Not found"}},
 )
 
 logger = logging.getLogger(__name__)
 
 BASE_URL = "https://strav.nasejidelna.cz/0341"
-INITIAL_URL = f"{BASE_URL}/"
+INITIAL_URL = f"{BASE_URL}/login"
 LOGIN_URL = f"{BASE_URL}/j_spring_security_check"
 LUNCH_URL = f"{BASE_URL}/faces/secured/month.jsp"
 
 
-@router.get("/scrape-jidelnicek", response_model=LunchMenuPerDay)
-def scrape_jidelnicek(headers = Depends(get_authentication_headers)):
-    """
-    Scrapes the third column text only if the second column text is "Ječná" from the LOGIN_URL page.
-    """
-    response = requests.get(LOGIN_URL)
-
-    if response.status_code != 200:
-        raise HTTPException(status_code=500, detail="Failed to fetch login page")
-
-    soup = BeautifulSoup(response.text, "html.parser")
-
-    all_days = soup.select("div.jidelnicekDen")
-    result_divs = []
-
-    for day in all_days:
-        divs = []
-
-        article = day.select_one("article")
-        if not article:
-            raise HTTPException(status_code=404, detail="No article element found")
-
-        for container in article.select("div.container"):
-            second_column_elements = container.select(".shrinkedColumn.jidelnicekItem")
-            second_column = second_column_elements[1] if len(second_column_elements) > 1 else None
-            third_column = container.select_one(".column.jidelnicekItem")
-
-            if second_column and third_column:
-                second_text = second_column.get_text(strip=True)
-                third_text = third_column.get_text(separator=" ", strip=True)
-
-                if second_text == "Ječná":
-                    divs.append(third_text)
-                    logger.debug(f"Matched 'Ječná': {third_text}")
-
-        result_divs.append(divs)
-
-    if not divs:
-        raise HTTPException(status_code=404, detail="No matching jidelnicekDen elements found")
-
-    return result_divs
-
-
-@router.post(
-    "/login",
-    summary="Login to scraper",
-    description="Authenticates using username and password, retrieves JSESSIONID for scraping.",
-)
-def login(credentials: LoginSchema):
+@router.post("/scrape-jidelnicek", response_model=LunchMenuPerDay)
+def scrape_jidelnicek(credentials: LoginSchema):
     session = requests.Session()
 
-    session.head(BASE_URL)
+    session.head(INITIAL_URL)
 
     cookies = session.cookies.get_dict()
 
     if "JSESSIONID" not in cookies or "XSRF-TOKEN" not in cookies:
+        logger.info("%s", str(cookies))
         raise HTTPException(status_code=400, detail="Missing required session cookies")
 
     logger.debug("Initial cookies: %s", cookies)
@@ -90,6 +44,11 @@ def login(credentials: LoginSchema):
         "Content-Type": "application/x-www-form-urlencoded",
         "Origin": "https://strav.nasejidelna.cz",
         "Referer": f"{BASE_URL}/login",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-User": "?1",
+        "Priority": "u=0, i"
     }
 
     session.cookies.update(cookies)
@@ -109,14 +68,52 @@ def login(credentials: LoginSchema):
 
         if "login_error=1" in location:
             raise HTTPException(status_code=401, detail="Invalid credentials")
-        elif "faces/secured/main.jsp" in location:
-            session_cookies = session.cookies.get_dict()
-            return {
-                "message": "Login successful",
-                "cookies": session_cookies
-            }
-        else:
-            logger.debug("Redirect location: %s", location)
-            raise HTTPException(status_code=400, detail="Unexpected redirect location")
 
-    raise HTTPException(status_code=500, detail="Unexpected login response")
+    headers["Referer"] = "https://strav.nasejidelna.cz/0341/faces/secured/main.jsp?status=true&printer=false&keyboard=false&terminal=false"
+    response = session.get(LUNCH_URL, timeout=10, cookies=headers)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Failed to fetch lunch data")
+
+    logger.info(response.headers)
+
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    main_context = soup.select_one("#mainContext")
+    all_days = main_context.select("form")
+    result_data = {}
+
+    print(len(all_days))
+    for day in all_days:
+        date_div = day.select_one("div.jidelnicekTop")
+        if not date_div:
+            continue
+        date_text = date_div.get_text(strip=True)
+
+        lunches = {}
+        for idx, item in enumerate(day.select(".jidelnicekItem"), start=1):
+            menu_text_element = item.select_one(".jidWrapCenter")
+            order_button = item.select_one(".btn.button-link")
+
+            if menu_text_element:
+                menu_text_parts = menu_text_element.get_text(separator=", ", strip=True).split("; ")
+                main_course = menu_text_parts[1] if len(menu_text_parts) > 1 else "Unknown"
+                soup = menu_text_parts[0] if menu_text_parts else "Unknown"
+                dessert = menu_text_parts[2] if len(menu_text_parts) > 2 else None
+                drink = "Unknown"
+                ordered = "fa-check" in str(order_button) if order_button else False
+
+                lunches[idx] = LunchItem(
+                    main_course=main_course,
+                    soup=soup,
+                    dessert=dessert,
+                    drink=drink,
+                    was_ordered=ordered
+                )
+
+        result_data[date_text] = lunches
+
+    if not result_data:
+        raise HTTPException(status_code=404, detail="No lunch data found")
+
+    return LunchMenuPerDay(root=result_data)

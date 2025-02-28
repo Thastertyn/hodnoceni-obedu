@@ -1,4 +1,7 @@
 {
-	"python.defaultInterpreterPath": "backend/.venv/bin/python",
-	"python.REPL.enableREPLSmartSend": false
+	"files.exclude"                 : { "**/__pycache__/**": true },         // Hide __pycache__ directories
+	"mypy-type-checker.args"        : ["--config-file='backend/mypy.ini'"],  // Override mypy config
+	"python.defaultInterpreterPath" : "./backend/.venv/bin/python",          // Use venv by default
+	"python.analysis.extraPaths"    : ["./backend"],                         // Pylint - fix for import analysis
+	"pylint.cwd"                    : "${workspaceFolder}/backend",          // Fix for imports
 }
