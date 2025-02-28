@@ -1,3 +1,4 @@
+import datetime
 import logging
 import requests
 from bs4 import BeautifulSoup
@@ -21,9 +22,11 @@ INITIAL_URL = f"{BASE_URL}/login"
 LOGIN_URL = f"{BASE_URL}/j_spring_security_check"
 LUNCH_URL = f"{BASE_URL}/faces/secured/month.jsp"
 
+PER_DAY_URL = f"{BASE_URL}/faces/secured/db/dbJidelnicekOnDayView.jsp"
 
-@router.post("/scrape-jidelnicek", response_model=LunchMenuPerDay)
-def scrape_jidelnicek(credentials: LoginSchema):
+
+@router.post("/scrape-jidelnicek")
+def scrape_jidelnicek(credentials: LoginSchema, date: datetime.date):
     session = requests.Session()
 
     session.head(INITIAL_URL)
@@ -34,21 +37,13 @@ def scrape_jidelnicek(credentials: LoginSchema):
         logger.info("%s", str(cookies))
         raise HTTPException(status_code=400, detail="Missing required session cookies")
 
-    logger.debug("Initial cookies: %s", cookies)
-
     csrf_token = cookies.get("XSRF-TOKEN")
 
     headers = {
         "Host": "strav.nasejidelna.cz",
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0",
+        "Accept": "text/html",
         "Content-Type": "application/x-www-form-urlencoded",
         "Origin": "https://strav.nasejidelna.cz",
-        "Referer": f"{BASE_URL}/login",
-        "Sec-Fetch-Dest": "document",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "same-origin",
-        "Sec-Fetch-User": "?1",
-        "Priority": "u=0, i"
     }
 
     session.cookies.update(cookies)
@@ -57,11 +52,12 @@ def scrape_jidelnicek(credentials: LoginSchema):
         "j_username": credentials.username,
         "j_password": credentials.password,
         "terminal": "false",
+        "type": "web",
         "_csrf": csrf_token,
         "targetUrl": "/faces/secured/main.jsp"
     }
 
-    response = session.post(LOGIN_URL, headers=headers, data=form_data, allow_redirects=False)
+    response = session.post(LOGIN_URL, data=form_data, allow_redirects=False)
 
     if response.status_code == 302:
         location = response.headers.get("Location", "")
@@ -69,8 +65,7 @@ def scrape_jidelnicek(credentials: LoginSchema):
         if "login_error=1" in location:
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    headers["Referer"] = "https://strav.nasejidelna.cz/0341/faces/secured/main.jsp?status=true&printer=false&keyboard=false&terminal=false"
-    response = session.get(LUNCH_URL, timeout=10, cookies=headers)
+    response = session.get(PER_DAY_URL, timeout=10, params={"day": str(date), "status": True, "keyboard": False, "printer": False, "terminal": False})
 
     if response.status_code != 200:
         raise HTTPException(status_code=500, detail="Failed to fetch lunch data")
@@ -79,8 +74,8 @@ def scrape_jidelnicek(credentials: LoginSchema):
 
     soup = BeautifulSoup(response.text, "html.parser")
 
-    main_context = soup.select_one("#mainContext")
-    all_days = main_context.select("form")
+    return response.text
+    all_days = []
     result_data = {}
 
     print(len(all_days))
