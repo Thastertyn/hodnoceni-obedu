@@ -7,7 +7,7 @@
     min-height: 100vh;
     margin: 0;
     font-family: 'Arial', sans-serif;
-    background-color: #fff; /* Bílé pozadí */
+    background-color: #fff;
   }
   
   /* Horní uvítací text */
@@ -24,7 +24,7 @@
   }
   
   .landing-header p {
-    margin: 8px 0 0;
+    margin: 25px 0 0;
     color: #333;
   }
   
@@ -78,6 +78,30 @@
   .meal-card p {
     margin: 0;
     color: #333;
+  }
+
+  /* Sekce "Přihlaste se pro hodnocení" */
+  .login-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .login-button-redir {
+    align-items: center;
+    width: 100%;
+    max-width: 210px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: #28363c;
+    color: #fff;  
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
   }
   
   /* Spodní navigační lišta */

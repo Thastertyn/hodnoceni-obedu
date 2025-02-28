@@ -74,7 +74,7 @@
   border-radius: 4px;
   margin-bottom: 15px;
   padding: 0 10px;
-  border: 2px solid white; /* Bílý outline pro desktop */
+  border: 2px solid white;
   width: 100%;
   max-width: 300px;
 }
@@ -94,7 +94,7 @@
 
 /* Tlačítko */
 .login-button {
-  width: 70%; /* Užší tlačítko než inputy */
+  width: 70%;
   max-width: 200px;
   padding: 10px;
   border: none;
@@ -185,7 +185,7 @@
 
   .left-section {
       display: flex;
-      justify-content: center; /* Centrovaný text */
+      justify-content: center;
       align-items: center;
       flex: 0;
       padding: 20px;
@@ -195,11 +195,11 @@
   }
 
   .logo {
-      display: none; /* Skryje jen logo, ale nechá text */
+      display: none;
   }
 
   .left-section h2 {
-      text-align: center; /* Centrovaný text na mobilu */
+      text-align: center;
       max-width: 90%; 
       font-size: 26px;
   }
