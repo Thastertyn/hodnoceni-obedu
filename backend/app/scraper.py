@@ -1,13 +1,16 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 import time
 
-from sqlmodel import Session
+class TaskScheduler:
+    def __init__(self):
+        self.scheduler = BackgroundScheduler()
 
-def scrape_lunches(session: session):
-    pass
+    def daily_scrape(self):
+        pass
 
-scheduler = BackgroundScheduler()
+    def initialize(self):
+        self.scheduler.add_job(self.daily_scrape, 'cron', hour=0, minute=0, second=0)
+        self.scheduler.start()
 
-scheduler.add_job(scrape_lunches, 'cron', hour=3, minute=0)
-
-scheduler.start()
+    def cleanup(self):
+        self.scheduler.shutdown()

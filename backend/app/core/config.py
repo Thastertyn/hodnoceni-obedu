@@ -58,11 +58,11 @@ class Settings(BaseSettings):
     def SQLALCHEMY_DATABASE_URI(self) -> MySQLDsn:  # pylint: disable=invalid-name
         return MultiHostUrl.build(
             scheme="mysql+mysqlconnector",
-            username=self.POSTGRES_USER,
-            password=self.POSTGRES_PASSWORD,
-            host=self.POSTGRES_SERVER,
-            port=self.POSTGRES_PORT,
-            path=self.POSTGRES_DB,
+            username=self.MYSQL_USER,
+            password=self.MYSQL_PASSWORD,
+            host=self.MYSQL_SERVER,
+            port=self.MYSQL_PORT,
+            path=self.MYSQL_DB,
         )
 
     SMTP_TLS: bool = True
