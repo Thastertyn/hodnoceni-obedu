@@ -11,56 +11,22 @@ class LunchItem(BaseModel):
 
 
 class LunchMenuPerDay(RootModel):
-    root: Dict[str, Dict[int, LunchItem]] = Field(
+    root: Dict[int, LunchItem] = Field(
         ...,
         example={
-            "2025-02-26": {
-                1: {
-                    "main_course": "Kuřecí řízek, bramborová kaše",
-                    "soup": "Dýňová polévka",
-                    "dessert": "Makovec",
-                    "drink": "Čaj",
-                    "was_ordered": True
-                },
-                2: {
-                    "main_course": "Bezmasá čína, rýžové nudle",
-                    "soup": "Hovězí vývar s fridátovými nudlemi",
-                    "dessert": None,
-                    "drink": "Džus",
-                    "was_ordered": False
-                }
+            1: {
+                "main_course": "Kuřecí řízek, bramborová kaše",
+                "soup": "Dýňová polévka",
+                "dessert": "Makovec",
+                "drink": "Čaj",
+                "was_ordered": True
             },
-            "2025-02-27": {
-                1: {
-                    "main_course": "Kuřecí řízek, bramborová kaše",
-                    "soup": "Dýňová polévka",
-                    "dessert": "Makovec",
-                    "drink": "Čaj",
-                    "was_ordered": True
-                },
-                2: {
-                    "main_course": "Bezmasá čína, rýžové nudle",
-                    "soup": "Hovězí vývar s fridátovými nudlemi",
-                    "dessert": None,
-                    "drink": "Džus",
-                    "was_ordered": False
-                }
-            },
-            "2025-02-28": {
-                1: {
-                    "main_course": "Kuřecí řízek, bramborová kaše",
-                    "soup": "Dýňová polévka",
-                    "dessert": "Makovec",
-                    "drink": "Čaj",
-                    "was_ordered": True
-                },
-                2: {
-                    "main_course": "Bezmasá čína, rýžové nudle",
-                    "soup": "Hovězí vývar s fridátovými nudlemi",
-                    "dessert": None,
-                    "drink": "Džus",
-                    "was_ordered": False
-                }
+            2: {
+                "main_course": "Bezmasá čína, rýžové nudle",
+                "soup": "Hovězí vývar s fridátovými nudlemi",
+                "dessert": None,
+                "drink": "Džus",
+                "was_ordered": False
             }
         }
     )
