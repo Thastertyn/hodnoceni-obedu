@@ -1,23 +1,38 @@
-from typing import Literal
-from pydantic import date
-from sqlmodel import Field, SQLModel
+from typing import Dict
+from datetime import date
+from sqlmodel import Field as sqlmodel_field, SQLModel
+from pydantic import Field as pydantic_field, RootModel
 
 
 class Lunch(SQLModel, table=True):
-    id: int = Field(primary_key=True)
-    lunch_date: date
-    option: Literal[1, 2]
-    main_course: str = Field(max_length=64)
-    dessert: str | None = Field(default=None, max_length=64)
-    drink: str = Field(max_length=64)
-    soup: str = Field(max_length=64)
+    option_id: int = sqlmodel_field(primary_key=True)
+    lunch_date: date = sqlmodel_field(primary_key=True)
+    main_course: str = sqlmodel_field(max_length=100)
+    soup: str | None = sqlmodel_field(default=None, max_length=100)
+    dessert: str | None = sqlmodel_field(default=None, max_length=100)
+    drink: str | None = sqlmodel_field(default=None, max_length=100)
 
-class LunchCreate(SQLModel):
-    lunch_date: date
-    option: Literal[1, 2]
-    main_course: str = Field(max_length=64)
-    dessert: str | None = Field(default=None, max_length=64)
-    drink: str = Field(max_length=64)
-    soup: str = Field(max_length=64)
 
-__all__ = ["Lunch", "LunchCreate"]
+class LunchDayMenu(RootModel):
+    root: Dict[int, Lunch] = pydantic_field(
+        ...,
+        example={
+            1: {
+                "main_course": "Kuřecí řízek, bramborová kaše",
+                "soup": "Dýňová polévka",
+                "dessert": "Makovec",
+                "drink": "Čaj",
+                "was_ordered": True
+            },
+            2: {
+                "main_course": "Bezmasá čína, rýžové nudle",
+                "soup": "Hovězí vývar s fridátovými nudlemi",
+                "dessert": None,
+                "drink": "Džus",
+                "was_ordered": False
+            }
+        }
+    )
+
+
+__all__ = ["Lunch"]

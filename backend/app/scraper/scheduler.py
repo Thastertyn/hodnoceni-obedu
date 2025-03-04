@@ -1,5 +1,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-import time
+
+from app.core.config import settings
+
 
 class TaskScheduler:
     def __init__(self):

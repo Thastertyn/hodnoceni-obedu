@@ -15,8 +15,8 @@ from app.schemas.lunch_schema import LunchItem, LunchMenuPerDay
 # ------------------- Router and Constants -------------------
 
 router = APIRouter(
-    prefix="/scraper",
-    tags=["scraper"],
+    prefix="/scrape",
+    tags=["Scraping"]
 )
 logger = logging.getLogger(__name__)
 
@@ -247,8 +247,7 @@ def parse_menu(html_content: str, date_obj: datetime.date) -> LunchMenuPerDay:
 @router.post("/scrape-jidelnicek", response_model=LunchMenuPerDay)
 async def scrape_jidelnicek(credentials: LoginSchema, date: datetime.date, request: Request = None):
     """
-    Endpoint to scrape the lunch menu for a specific date.
-    It logs in, scrapes the page, parses the data, and returns it as a structured model.
+        Forces the lunches to be scraped right now, instead of waiting until midnight
     """
     try:
         # Setup session with proper headers
