@@ -244,7 +244,7 @@ def parse_menu(html_content: str, date_obj: datetime.date) -> LunchMenuPerDay:
 # ------------------- FastAPI Endpoint -------------------
 
 
-@router.post("/scrape-jidelnicek", response_model=LunchMenuPerDay)
+@router.post("", response_model=LunchMenuPerDay)
 async def scrape_jidelnicek(credentials: LoginSchema, date: datetime.date, request: Request = None):
     """
         Forces the lunches to be scraped right now, instead of waiting until midnight
