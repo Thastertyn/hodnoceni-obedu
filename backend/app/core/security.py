@@ -55,6 +55,7 @@ def login(credentials: Login, session: requests.Session = None) -> None:
         "_csrf": csrf_token,
         "targetUrl": "/faces/secured/main.jsp"
     }
+
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
         "Origin": BASE_URL,

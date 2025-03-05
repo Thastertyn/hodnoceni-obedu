@@ -2,7 +2,8 @@ import datetime
 from fastapi import APIRouter, Depends
 
 
-from app.models.lunch_model import LunchDayMenu
+from app.models.lunch_model import LunchDayMenu, Lunch
+from app.schemas.lunch_schema import LunchMenuPerDay
 
 from app.crud.lunch_crud import get_lunch_by_date
 
@@ -15,7 +16,7 @@ router = APIRouter(
     dependencies=[Depends(get_credentials)]
 )
 
-@router.get("", response_model=LunchDayMenu, name="Get lunch options for a day")
+@router.get("", response_model=LunchMenuPerDay, name="Get lunch options for a day")
 def get_lunch_for_day(session: SessionDep, date: datetime.date):
     return get_lunch_by_date(lunch_date=date, session=session)
 

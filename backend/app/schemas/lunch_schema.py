@@ -7,7 +7,6 @@ class LunchItem(BaseModel):
     soup: str = Field(..., example="Dýňová polévka")
     dessert: Optional[str] = Field(None, example="Makovec")
     drink: str = Field(..., examples=["Čaj", "Šťáva", "Džus", "Voda", "Kakao"])
-    was_ordered: bool = Field(..., examples=[True, False])
 
 
 class LunchMenuPerDay(RootModel):
@@ -19,14 +18,12 @@ class LunchMenuPerDay(RootModel):
                 "soup": "Dýňová polévka",
                 "dessert": "Makovec",
                 "drink": "Čaj",
-                "was_ordered": True
             },
             2: {
                 "main_course": "Bezmasá čína, rýžové nudle",
                 "soup": "Hovězí vývar s fridátovými nudlemi",
                 "dessert": None,
                 "drink": "Džus",
-                "was_ordered": False
             }
         }
     )

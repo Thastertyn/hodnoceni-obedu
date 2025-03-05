@@ -22,14 +22,12 @@ class LunchDayMenu(RootModel):
                 "soup": "Dýňová polévka",
                 "dessert": "Makovec",
                 "drink": "Čaj",
-                "was_ordered": True
             },
             2: {
                 "main_course": "Bezmasá čína, rýžové nudle",
                 "soup": "Hovězí vývar s fridátovými nudlemi",
                 "dessert": None,
                 "drink": "Džus",
-                "was_ordered": False
             }
         }
     )

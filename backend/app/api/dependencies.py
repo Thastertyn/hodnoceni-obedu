@@ -22,7 +22,7 @@ def get_credentials(
     if not username or not password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Missing credentials")
 
-    return Login(username=username, password=password)
+    return Login(email=username, password=password)
 
 
 def get_db() -> Generator[Session, None, None]:
