@@ -1,13 +1,28 @@
 {
 	"configurations": [
 		{
-			"name": "Python Debugger: FastAPI",
+			"name": "Backend",
 			"type": "debugpy",
 			"request": "launch",
 			"module": "fastapi",
 			"cwd": "${workspaceFolder}/backend/",
 			"args": ["dev", "${cwd}/backend/app/main.py"],
 			"console": "internalConsole"
+		},
+		{
+			"name": "Frontend",
+			"type": "node",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/frontend",
+			"runtimeExecutable": "npm",
+			"args": ["run", "start"],
+			"console": "internalConsole"
+		}
+	],
+	"compounds": [
+		{
+			"name": "Fullstack",
+			"configurations": ["Backend", "Frontend"]
 		}
 	]
 }

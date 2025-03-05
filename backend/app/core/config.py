@@ -74,6 +74,9 @@ class Settings(BaseSettings):
     EMAILS_FROM_EMAIL: EmailStr | None = None
     EMAILS_FROM_NAME: EmailStr | None = None
 
+    CANTEEN_USERNAME: str
+    CANTEEN_PASSWORD: str
+
     @computed_field
     @property
     def emails_enabled(self) -> bool:

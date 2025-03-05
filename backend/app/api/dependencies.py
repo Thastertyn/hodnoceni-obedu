@@ -3,8 +3,7 @@ from typing import Annotated
 from pydantic import EmailStr, ValidationError
 
 import jwt
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, status, Header
 from jwt.exceptions import InvalidTokenError
 from sqlmodel import Session
 
@@ -13,10 +12,17 @@ from app.core.config import settings
 from app.core.db import engine
 
 from app.models.token_model import TokenPayload
+from app.models.user_model import Login
 
-reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl="/login/access-token"
-)
+
+def get_credentials(
+    username: str = Header(..., convert_underscores=False, alias="X-USERNAME"),
+    password: str = Header(..., convert_underscores=False, alias="X-PASSWORD")
+) -> Login:
+    if not username or not password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Missing credentials")
+
+    return Login(username=username, password=password)
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -25,10 +31,10 @@ def get_db() -> Generator[Session, None, None]:
 
 
 SessionDep = Annotated[Session, Depends(get_db)]
-TokenDep = Annotated[str, Depends(reusable_oauth2)]
+LoginDep = Annotated[Login, Depends(get_credentials)]
 
 
-def get_current_user_email(token: TokenDep) -> EmailStr:
+def get_current_user_email(token: LoginDep) -> EmailStr:
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
