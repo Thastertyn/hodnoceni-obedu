@@ -10,16 +10,18 @@ app = FastAPI(title="Hodnocení obědů")
 
 logging.basicConfig(level=logging.DEBUG)
 
-# Enable CORS
+# Enable CORS here in the backend:
+# Allow all origins, methods, headers, and credentials
+# Adjust these values (especially allow_origins) to tighten security if desired
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow requests from your React frontend
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# Include routers
+# Include the application routers
 app.include_router(scrape_router.router)
 app.include_router(lunch_router.router)
 

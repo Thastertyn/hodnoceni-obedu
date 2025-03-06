@@ -14,6 +14,14 @@ export default function App() {
     setIsLoggedIn(true);
   };
 
+  // Add logout handler
+  const handleLogout = () => {
+    // Clear user credentials
+    setUserCredentials(null);
+    // Set logged in state to false
+    setIsLoggedIn(false);
+  };
+
   return (
     <Router>
       <Routes>
@@ -24,6 +32,7 @@ export default function App() {
             <LandingPage
               isLoggedIn={isLoggedIn}
               userCredentials={userCredentials}
+              onLogout={handleLogout}
             />
           }
         />
@@ -31,8 +40,21 @@ export default function App() {
         {/* Login page */}
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
 
-        {/* Lunch rating form */}
-        <Route path="/rating" element={<LunchRating />} />
+        {/* Lunch rating form - Pass userCredentials */}
+        <Route 
+          path="/rating" 
+          element={
+            isLoggedIn ? (
+              <LunchRating 
+                onClose={() => <Navigate to="/" />} 
+                lunchId={1} // This should be dynamic based on selected meal
+                userCredentials={userCredentials}
+              />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
 
         {/* Fallback to landing page */}
         <Route path="*" element={<Navigate to="/" />} />

@@ -134,3 +134,18 @@
     color: #000;
   }
   
+.refresh-button {
+  background-color: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+.refresh-button:hover {
+  color: #3498db;
+  transform: rotate(45deg);
+}
