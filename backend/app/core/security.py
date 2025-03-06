@@ -48,7 +48,7 @@ def login(credentials: Login, session: requests.Session = None) -> None:
         raise SecurityError("No CSRF token found in cookies")
 
     login_data = {
-        "j_username": credentials.email,
+        "j_username": credentials.username,
         "j_password": credentials.password,
         "terminal": "false",
         "type": "web",

@@ -31,7 +31,7 @@ MENU_AJAX_URL = f"{BASE_URL}/faces/secured/month.jsp?terminal=false&keyboard=fal
 
 def scrape_week_ahead(session: Session):
     try:
-        credentials = Login(email=settings.CANTEEN_USERNAME, password=settings.CANTEEN_PASSWORD)
+        credentials = Login(username=settings.CANTEEN_USERNAME, password=settings.CANTEEN_PASSWORD)
 
         http_session = requests.Session()
         http_session.headers.update({
