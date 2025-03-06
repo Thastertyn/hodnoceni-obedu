@@ -7,7 +7,13 @@
 			"module": "fastapi",
 			"cwd": "${workspaceFolder}/backend/",
 			"args": ["dev", "${cwd}/backend/app/main.py"],
-			"console": "internalConsole"
+			"console": "internalConsole",
+			"serverReadyAction":{
+				"action": "openExternally",
+				"killOnServerStop": false,
+				"pattern": "Application startup complete.",
+				"uriFormat": "http://localhost:8000/docs"
+			}
 		},
 		{
 			"name": "Frontend",

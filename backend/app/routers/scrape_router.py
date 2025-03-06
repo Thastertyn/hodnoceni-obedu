@@ -1,10 +1,7 @@
-import requests
 from fastapi import APIRouter, HTTPException
 from app.scraper.scraper import scrape_week_ahead
 
 from app.api.dependencies import SessionDep
-
-# ------------------- Router and Constants -------------------
 
 router = APIRouter(
     prefix="/scrape",
