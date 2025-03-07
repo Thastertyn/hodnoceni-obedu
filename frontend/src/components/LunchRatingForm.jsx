@@ -258,7 +258,7 @@ export default function LunchRatingForm({ lunchId, userCredentials }) {
       </button>
 
       <div className="user-info-display">
-        Přihlášen: {userCredentials?.username || 'SasaTurtle'}
+        Přihlášen: {userCredentials?.username}
       </div>
     </div>
   );
