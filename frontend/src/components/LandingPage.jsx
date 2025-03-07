@@ -25,21 +25,30 @@ export default function LandingPage({ isLoggedIn, userCredentials, onLogout }) {
   const [error, setError] = useState(null);
   const [pastError, setPastError] = useState(null);
   
-  // NEW state for past lunches
+  // State holding the past lunches + rating info
+  // Each item is { lunch: {...}, rating: {...} or null }
   const [pastLunches, setPastLunches] = useState([]);
 
-  // Reference date for testing - use this instead of new Date() for consistency
-  const currentDate = new Date("2025-03-06");
+  // --- Logout modal handlers ---
+  const openLogoutModal = () => setShowLogoutModal(true);
+  const closeLogoutModal = () => setShowLogoutModal(false);
 
-  const openLogoutModal = () => {
-    setShowLogoutModal(true);
+  // --- Manual data refresh ---
+  const refreshData = () => {
+    fetchTodayMeal(true);
+    fetchPastLunches(true);
   };
 
-  const closeLogoutModal = () => {
-    setShowLogoutModal(false);
+  // --- Format date: "DD.MM.YYYY" ---
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}.${date.getFullYear()}`;
   };
 
-  // Helper function to check if cache is valid
+  // --- Check if cache is valid ---
   const isCacheValid = useCallback((cacheData, expirationMinutes) => {
     if (!cacheData || !cacheData.timestamp) return false;
     
@@ -48,222 +57,191 @@ export default function LandingPage({ isLoggedIn, userCredentials, onLogout }) {
     const diffMs = now - cachedTime;
     const diffMinutes = diffMs / (1000 * 60);
     
-    // Check if cache is still valid based on expiration time
     return diffMinutes < expirationMinutes;
   }, []);
 
-  // Helper to get current date string in YYYY-MM-DD format
+  // --- Get current date in YYYY-MM-DD format ---
   const getCurrentDateString = useCallback(() => {
-    return currentDate.toISOString().split('T')[0]; // Use reference date
+    return new Date().toISOString().split('T')[0];
   }, []);
 
-  // 1) Fetch today's lunch with caching
-  const fetchTodayMeal = useCallback(async (forceRefresh = false) => {
-    if (!userCredentials) return;
-    
-    const cacheKey = CACHE_CONFIG.todayMeal.getKey(userCredentials.username);
-    
-    // Try to get from cache first if not forcing refresh
-    if (!forceRefresh) {
-      try {
-        const cachedData = localStorage.getItem(cacheKey);
-        if (cachedData) {
-          const parsedCache = JSON.parse(cachedData);
-          
-          // Check if cache is valid and matches current date
-          if (isCacheValid(parsedCache, CACHE_CONFIG.todayMeal.expirationMinutes) && 
-              parsedCache.date === getCurrentDateString()) {
-            console.log("Using cached today's meal data");
-            setTodayMeal(parsedCache.data);
-            return;
+  // --- 1) Fetch today's lunch (caching) ---
+  const fetchTodayMeal = useCallback(
+    async (forceRefresh = false) => {
+      if (!userCredentials) return;
+      
+      const cacheKey = CACHE_CONFIG.todayMeal.getKey(userCredentials.username);
+      
+      if (!forceRefresh) {
+        try {
+          const cachedData = localStorage.getItem(cacheKey);
+          if (cachedData) {
+            const parsedCache = JSON.parse(cachedData);
+            
+            if (
+              isCacheValid(parsedCache, CACHE_CONFIG.todayMeal.expirationMinutes) &&
+              parsedCache.date === getCurrentDateString()
+            ) {
+              console.log("Using cached today's meal data");
+              setTodayMeal(parsedCache.data);
+              return;
+            }
           }
+        } catch (err) {
+          console.warn("Error reading from cache:", err);
         }
-      } catch (err) {
-        console.warn("Error reading from cache:", err);
-        // Continue to fetch fresh data
       }
-    }
 
-    // If no valid cache or force refresh requested, fetch fresh data
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const today = getCurrentDateString();
-      const response = await fetch(`http://127.0.0.1:8000/lunch?date=${today}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-USERNAME': userCredentials.username,
-          'X-PASSWORD': userCredentials.password,
-        },
-      });
+      setLoading(true);
+      setError(null);
       
-      if (!response.ok) {
-        throw new Error(`Server responded with status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      setTodayMeal(data);
-      
-      // Save to cache with timestamp
-      const cacheData = {
-        data: data,
-        timestamp: new Date().toISOString(),
-        date: today
-      };
-      localStorage.setItem(cacheKey, JSON.stringify(cacheData));
-      
-    } catch (err) {
-      console.error('Error fetching today\'s meal:', err);
-      setError(`Nepodařilo se načíst dnešní oběd: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
-  }, [userCredentials, getCurrentDateString, isCacheValid]);
-
-  // 2) Fetch older lunches with caching
-  const fetchPastLunches = useCallback(async (forceRefresh = false) => {
-    if (!userCredentials) return;
-    
-    const cacheKey = CACHE_CONFIG.pastLunches.getKey(userCredentials.username);
-    
-    // Try to get from cache first if not forcing refresh
-    if (!forceRefresh) {
       try {
-        const cachedData = localStorage.getItem(cacheKey);
-        if (cachedData) {
-          const parsedCache = JSON.parse(cachedData);
-          
-          // Check if cache is valid
-          if (isCacheValid(parsedCache, CACHE_CONFIG.pastLunches.expirationMinutes)) {
-            console.log("Using cached past lunches data");
-            setPastLunches(parsedCache.data);
-            return;
-          }
+        const today = getCurrentDateString();
+        const response = await fetch(`http://127.0.0.1:8000/lunch?date=${today}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-USERNAME': userCredentials.username,
+            'X-PASSWORD': userCredentials.password,
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Server responded with status: ${response.status}`);
         }
+        
+        const data = await response.json();
+        setTodayMeal(data);
+        
+        const cacheData = {
+          data,
+          timestamp: new Date().toISOString(),
+          date: today
+        };
+        localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+        
       } catch (err) {
-        console.warn("Error reading from cache:", err);
-        // Continue to fetch fresh data
+        console.error('Error fetching today\'s meal:', err);
+        setError(`Nepodařilo se načíst dnešní oběd: ${err.message}`);
+      } finally {
+        setLoading(false);
       }
-    }
+    },
+    [userCredentials, getCurrentDateString, isCacheValid]
+  );
 
-    // If no valid cache or force refresh, fetch new data
-    setPastLoading(true);
-    setPastError(null);
-    
-    try {
-      const response = await fetch("http://127.0.0.1:8000/lunch/rating", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "X-USERNAME": userCredentials.username,
-          "X-PASSWORD": userCredentials.password,
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Server responded with status: ${response.status}`);
-      }
-  
-      const data = await response.json();
+  // --- 2) Fetch older lunches + rating info (caching) ---
+  const fetchPastLunches = useCallback(
+    async (forceRefresh = false) => {
+      if (!userCredentials) return;
       
-      // Use the reference date (2025-03-10 in your original code)
-      const refDate = new Date("2025-03-10");
-      refDate.setHours(0, 0, 0, 0);
+      const cacheKey = CACHE_CONFIG.pastLunches.getKey(userCredentials.username);
       
-      const olderLunches = data.filter(item => {
-        const rawDate = item.lunch?.lunch_date;
-        
-        if (!rawDate) {
-          return false;
+      if (!forceRefresh) {
+        try {
+          const cachedData = localStorage.getItem(cacheKey);
+          if (cachedData) {
+            const parsedCache = JSON.parse(cachedData);
+            
+            if (isCacheValid(parsedCache, CACHE_CONFIG.pastLunches.expirationMinutes)) {
+              console.log("Using cached past lunches data");
+              setPastLunches(parsedCache.data);
+              return;
+            }
+          }
+        } catch (err) {
+          console.warn("Error reading from cache:", err);
         }
-        
-        const lunchDate = new Date(rawDate);
-        lunchDate.setHours(0, 0, 0, 0);
-        
-        return lunchDate < refDate;
-      });
-  
-      // Sort by date (newest first)
-      olderLunches.sort((a, b) => new Date(b.lunch.lunch_date) - new Date(a.lunch.lunch_date));
-      
-      const filteredLunches = olderLunches.slice(0, 5);
-      setPastLunches(filteredLunches);
-      
-      // Save to cache with timestamp
-      const cacheData = {
-        data: filteredLunches,
-        timestamp: new Date().toISOString()
-      };
-      localStorage.setItem(cacheKey, JSON.stringify(cacheData));
-      
-    } catch (err) {
-      console.error("❌ Error fetching past lunches:", err);
-      setPastError(`Nepodařilo se načíst starší obědy: ${err.message}`);
-    } finally {
-      setPastLoading(false);
-    }
-  }, [userCredentials, isCacheValid]);
+      }
 
-  // Fetch data on component mount or when login state changes
+      setPastLoading(true);
+      setPastError(null);
+      
+      try {
+        // GET /lunch/rating returns an array of objects:
+        // [ { lunch: {...}, rating: {...} or null }, ... ]
+        const response = await fetch("http://127.0.0.1:8000/lunch/rating", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-USERNAME": userCredentials.username,
+            "X-PASSWORD": userCredentials.password,
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error(`Server responded with status: ${response.status}`);
+        }
+    
+        const data = await response.json();
+        
+        // Filter out lunches older than "today"
+        const refDate = new Date();
+        refDate.setHours(0, 0, 0, 0);
+        
+        const olderLunches = data.filter(item => {
+          const rawDate = item.lunch?.lunch_date;
+          if (!rawDate) return false;
+          
+          const lunchDate = new Date(rawDate);
+          lunchDate.setHours(0, 0, 0, 0);
+          
+          return lunchDate < refDate;
+        });
+    
+        // Sort descending by date
+        olderLunches.sort(
+          (a, b) =>
+            new Date(b.lunch.lunch_date) - new Date(a.lunch.lunch_date)
+        );
+        
+        // Keep the first 5
+        const filteredLunches = olderLunches.slice(0, 5);
+        setPastLunches(filteredLunches);
+        
+        // Cache
+        const cacheData = {
+          data: filteredLunches,
+          timestamp: new Date().toISOString()
+        };
+        localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+        
+      } catch (err) {
+        console.error("❌ Error fetching past lunches:", err);
+        setPastError(`Nepodařilo se načíst starší obědy: ${err.message}`);
+      } finally {
+        setPastLoading(false);
+      }
+    },
+    [userCredentials, isCacheValid]
+  );
+
+  // --- Fetch data on mount or login state change ---
   useEffect(() => {
     if (isLoggedIn && userCredentials) {
-      fetchTodayMeal(false); // Use cache if available
-      fetchPastLunches(false); // Use cache if available
+      fetchTodayMeal(false);
+      fetchPastLunches(false);
     }
   }, [isLoggedIn, userCredentials, fetchTodayMeal, fetchPastLunches]);
-
-  // Optional helper for displaying dates in "DD.MM.YYYY" (Czech format)
-  const formatDate = (dateString) => {
-    if (!dateString) {
-      return "Neznámé datum";
-    }
-    const date = new Date(dateString);
-    if (isNaN(date)) {
-      return "Neplatné datum";
-    }
-    return new Intl.DateTimeFormat('cs-CZ', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    }).format(date);
-  };
-
-  // Function to manually refresh data
-  const refreshData = () => {
-    if (isLoggedIn && userCredentials) {
-      fetchTodayMeal(true); // Force refresh
-      fetchPastLunches(true); // Force refresh
-    }
-  };
 
   return (
     <div className="landing-page">
       {/* If user is NOT logged in, show original layout */}
       {!isLoggedIn && (
         <>
-          <div className="content">
-            <header className="landing-header">
-              <p>
-                Vítejte v aplikaci,
-                <br />
-                <span>Hodnocení školních obědů</span>
-              </p>
-              <div className="sub-text">
-                <p>Vyberte si <strong>oběd</strong> a <strong>ohodnoťte</strong> jej!</p>
-              </div>
-            </header>
-            <div className="logo-container">
-              <img src={logo} alt="logo" className="logo" />
-            </div>
-            <section className="login-prompt">
-              <h2><strong>Přihlaste se</strong> pro hodnocení!</h2>
-              <button className="login-button-redir" onClick={() => navigate('/login')}>
-                Přihlásit se
-              </button>
-            </section>
+          <header className="landing-header">
+            <h1>Vítejte v aplikaci,<br/>Hodnocení školních obědů</h1>
+            <p>Vyberte si <strong>oběd</strong> a <strong>ohodnoťte</strong> jej!</p>
+          </header>
+          <div className="logo-container">
+            <img src={logo} alt="logo" className="logo" />
           </div>
+          <section className="login-prompt">
+            <h2><strong>Přihlaste se</strong> pro hodnocení!</h2>
+            <button className="login-button-redir" onClick={() => navigate('/login')}>
+              Přihlásit se
+            </button>
+          </section>
         </>
       )}
 
@@ -271,7 +249,7 @@ export default function LandingPage({ isLoggedIn, userCredentials, onLogout }) {
       {isLoggedIn && (
         <>
           <div className="user-info">
-            <p>Přihlášen: {userCredentials?.username || 'SasaTurtle'}</p>
+            <p>Přihlášen: {userCredentials?.username}</p>
             <button className="refresh-button" onClick={refreshData} title="Obnovit data">
               🔄 Obnovit
             </button>
@@ -286,7 +264,9 @@ export default function LandingPage({ isLoggedIn, userCredentials, onLogout }) {
             {error && (
               <div className="error-container">
                 <p className="error-message">{error}</p>
-                <button onClick={() => fetchTodayMeal(true)} className="retry-button">Zkusit znovu</button>
+                <button onClick={() => fetchTodayMeal(true)} className="retry-button">
+                  Zkusit znovu
+                </button>
               </div>
             )}
             {!loading && !error && todayMeal && (
@@ -322,22 +302,48 @@ export default function LandingPage({ isLoggedIn, userCredentials, onLogout }) {
             {pastError && (
               <div className="error-container">
                 <p className="error-message">{pastError}</p>
-                <button onClick={() => fetchPastLunches(true)} className="retry-button">Zkusit znovu</button>
+                <button onClick={() => fetchPastLunches(true)} className="retry-button">
+                  Zkusit znovu
+                </button>
               </div>
             )}
             {!pastLoading && !pastError && pastLunches.length === 0 ? (
               <p>Žádné starší obědy nebyly nalezeny.</p>
             ) : (
-              pastLunches.map((meal, index) => (
-                <div className="meal-card" key={meal.lunch.lunch_id || index}>
-                  <span className="status">Neohodnoceno</span>
-                  <p>
-                    <strong>Oběd {meal.lunch.lunch_id}:</strong> {meal.lunch.first_option}
-                  </p>
-                  <small>{formatDate(meal.lunch.lunch_date)}</small>
-                  {/* You can add a Rate button if needed */}
-                </div>
-              ))
+              pastLunches.map((meal, index) => {
+                // meal is { lunch: {...}, rating: {...} or null }
+                const isRated = meal.rating !== null;
+
+                return (
+                  <div
+                    className="meal-card"
+                    key={meal.lunch.lunch_id || index}
+                    onClick={() => {
+                      // Only allow rating if not rated yet
+                      if (!isRated) {
+                        navigate('/rating', {
+                          state: {
+                            mealId: meal.lunch.lunch_id,
+                            date: meal.lunch.lunch_date,
+                          },
+                        });
+                      }
+                    }}
+                    style={{ cursor: isRated ? 'default' : 'pointer' }}
+                  >
+                    <span
+                      className="status"
+                      style={{ color: isRated ? 'green' : 'red' }}
+                    >
+                      {isRated ? 'Hodnoceno' : 'Nehodnoceno'}
+                    </span>
+                    <p>
+                      <strong>Oběd {meal.lunch.lunch_id}:</strong> {meal.lunch.first_option}
+                    </p>
+                    <small>{formatDate(meal.lunch.lunch_date)}</small>
+                  </div>
+                );
+              })
             )}
           </section>
         </>

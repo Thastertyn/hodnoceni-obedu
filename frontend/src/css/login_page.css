@@ -1,4 +1,4 @@
-/* Kontejner zabírá celou výšku okna, ale pouze v rámci LoginPage */
+/* Kontejner zabírá celou výšku okna */
 .login-container {
   display: flex;
   height: 100vh;
@@ -6,8 +6,8 @@
   padding: 0;
 }
 
-/* Levá část (logo, text) pouze pro LoginPage */
-.login-container .left-section {
+/* Levá část (logo, text) */
+.left-section {
   flex: 1;
   background-color: #fff;
   display: flex;
@@ -16,24 +16,24 @@
   align-items: center;
 }
 
-.login-container .logo {
+.logo {
   width: 150px;
   margin-bottom: 20px;
 }
 
-.login-container .left-section p {
+.left-section p {
   color: #333;
   text-align: center;
   max-width: 310px;
   line-height: 1.4;
   font-size: 25px;
 }
-.login-container .left-section span {
+.left-section span {
   font-weight: bold;
 }
 
-/* Pravá část (přihlašovací formulář) pouze pro LoginPage */
-.login-container .right-section {
+/* Pravá část (formulář) */
+.right-section {
   flex: 1;
   background-color: #2f3b42;
   display: flex;
@@ -42,7 +42,7 @@
 }
 
 /* Přihlašovací formulář */
-.login-container .login-form {
+.login-form {
   background-color: transparent;
   padding: 40px;
   border-radius: 8px;
@@ -55,19 +55,19 @@
   align-items: center;
 }
 
-.login-container .login-form h2 {
+.login-form h2 {
   margin-bottom: 10px;
   text-align: center;
 }
 
-.login-container .login-form p {
+.login-form p {
   margin-bottom: 20px;
   font-size: 14px;
   text-align: center;
 }
 
-/* Vstupní pole (inputy) */
-.login-container .input-container {
+/* Inputy */
+.input-container {
   display: flex;
   align-items: center;
   background-color: #fff;
@@ -79,12 +79,12 @@
   max-width: 300px;
 }
 
-.login-container .input-container .icon {
+.input-container .icon {
   margin-right: 8px;
   color: #555;
 }
 
-.login-container .input-container input {
+.input-container input {
   border: none;
   outline: none;
   flex: 1;
@@ -92,8 +92,8 @@
   padding: 10px 0;
 }
 
-/* Tlačítko pro přihlášení */
-.login-container .login-button {
+/* Tlačítko */
+.login-button {
   width: 70%;
   max-width: 200px;
   padding: 10px;
@@ -107,19 +107,19 @@
   font-weight: bold;
 }
 
-.login-container .login-button:hover {
+.login-button:hover {
   background-color: #2287b3;
 }
 
 /* Responzivní styly */
 
-/* Verze pro tablety */
+/* Tablet verze */
 @media (max-width: 1024px) {
   .login-container {
       flex-direction: column;
   }
 
-  .login-container .left-section {
+  .left-section {
       display: flex;
       flex: 0;
       flex-direction: row;
@@ -129,13 +129,18 @@
       margin-top: 40px;
   }
 
-  .login-container .logo {
+  .logo {
       width: 100px;
       margin-bottom: 0;
       margin-right: 10px;
   }
 
-  .login-container .right-section {
+  .left-section h2 {
+      max-width: 100%;
+      text-align: left;
+  }
+
+  .right-section {
       background-color: #fff;
       flex: none;
       padding: 20px;
@@ -145,26 +150,26 @@
       margin-bottom: 40px;
   }
 
-  .login-container .login-form {
+  .login-form {
       color: #333;
       max-width: 400px;
   }
 
-  .login-container .login-form h2 {
+  .login-form h2 {
     font-size: 35px;
     margin-bottom: 20px;
-  }
+}
 
-  .login-container .login-form p {
+  .login-form p {
     font-size: 18px;
   }
 
-  .login-container .input-container {
+  .input-container {
       border: 2px solid black;
       margin: 10px;
   }
 
-  .login-container .login-button {
+  .login-button {
     width: 80%;
     max-width: 180px;
     margin-top: 25px;
@@ -178,7 +183,7 @@
       justify-content: center;
   }
 
-  .login-container .left-section {
+  .left-section {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -189,11 +194,17 @@
       margin-top: 60px;
   }
 
-  .login-container .logo {
+  .logo {
       display: none;
   }
 
-  .login-container .right-section {
+  .left-section h2 {
+      text-align: center;
+      max-width: 90%; 
+      font-size: 26px;
+  }
+
+  .right-section {
       background-color: #fff;
       width: 100%;
       display: flex;
@@ -202,10 +213,11 @@
       align-items: center;
       flex: 1;
       padding: 40px 0;
-      margin-bottom: 300px;
+      margin-bottom: 300px
+      
   }
 
-  .login-container .login-form {
+  .login-form {
       color: #333;
       max-width: 90%;
       display: flex;
@@ -214,20 +226,20 @@
       align-items: center;
   }
 
-  .login-container .login-form h2 {
+  .login-form h2 {
       font-size: 35px;
   }
 
-  .login-container .login-form p {
+  .login-form p {
     font-size: 20px;
   }
 
-  .login-container .input-container {
+  .input-container {
     border: 2px solid black;
     margin: 10px;
   }
 
-  .login-container .login-button {
+  .login-button {
       width: 80%;
       max-width: 180px;
       margin-top: 25px;
