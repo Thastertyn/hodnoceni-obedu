@@ -1,151 +1,141 @@
-/* Základní styl pro celou stránku */
+/* Celá stránka */
 .landing-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #fff;
-  }
-  
-  /* Horní uvítací text */
-  .landing-header {
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 20px;
-  }
-  
-  .landing-header h1 {
-    font-size: 1.4rem;
-    margin: 0;
-    font-weight: bold;
-  }
-  
-  .landing-header p {
-    margin: 25px 0 0;
-    color: #333;
-  }
-  
-  /* Kontejner pro logo */
-  .logo-container {
-    margin: 20px 0;
-  }
-  
-  .logo {
-    width: 120px;
-    height: auto;
-  }
-  
-  /* Sekce "Dnešní oběd" */
-  .today-meal {
-    width: 90%;
-    max-width: 400px;
-    margin-bottom: auto; /* natlačí navigaci dolů */
-  }
-  
-  .today-meal h2 {
-    font-size: 1.2rem;
-    color: #000;
-    margin-bottom: 10px;
-  }
-  
-  /* Karta s obědem */
-  .meal-card {
-    background-color: #f5f5f5;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-  
-  .status {
-    color: #ff4f4f; /* červená pro "Neohodnoceno" */
-    font-weight: bold;
-  }
-  
-  .date {
-    font-size: 0.9rem;
-    color: #777;
-  }
-  
-  .meal-card p {
-    margin: 0;
-    color: #333;
-  }
-
-  /* Sekce "Přihlaste se pro hodnocení" */
-  .login-prompt {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-top: 20px;
-  }
-
-  .login-button-redir {
-    align-items: center;
-    width: 100%;
-    max-width: 210px;
-    padding: 10px;
-    border: none;
-    border-radius: 10px;
-    background-color: #28363c;
-    color: #fff;  
-    font-size: 18px;
-    cursor: pointer;
-    margin-top: 10px;
-    font-weight: bold;
-  }
-  
-  /* Spodní navigační lišta */
-  .bottom-nav {
-    width: 100%;
-    max-width: 500px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    background-color: #fff;
-    border-top: 1px solid #ddd;
-    padding: 10px 0;
-    margin-top: 20px;
-  }
-  
-  /* Tlačítka ve spodní navigaci */
-  .bottom-nav button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.4rem;
-    color: #666;
-    outline: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .bottom-nav button:hover {
-    color: #000;
-  }
-  
-.refresh-button {
-  background-color: transparent;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  font-size: 0.9rem;
-  margin-top: 10px;
-  padding: 5px;
-  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #fff;
+  padding-bottom: 20px;
 }
 
-.refresh-button:hover {
+/* Hlavní obsah stránky */
+.landing-page .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  text-align: center;
+  max-width: 350px;
+  width: 100%;
+}
+
+/* Horní uvítací text */
+.landing-page .landing-header {
+  text-align: center;
+  margin-top: 100px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 350px;
+}
+
+.landing-page .landing-header p {
+  color: #333;
+  text-align: center;
+  max-width: 350px;
+  line-height: 1.4;
+  font-size: 18px;
+}
+
+.landing-page .landing-header p span {
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.landing-page .landing-header .sub-text p {
+  font-size: 18px;
+}
+
+/* Kontejner pro logo */
+.landing-page .logo-container {
+  margin: 0;
+}
+
+.landing-page .logo {
+  width: 230px;
+  height: auto;
+}
+
+/* Sekce "Přihlaste se pro hodnocení" */
+.landing-page .login-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: -30px;
+  margin-bottom: 50px;
+}
+
+.landing-page .login-prompt h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+/* Přihlašovací tlačítko */
+.landing-page .login-button-redir {
+  align-items: center;
+  width: 100%;
+  max-width: 210px;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background-color: #28363c;
+  color: #fff;  
+  font-size: 18px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Spodní navigační lišta */
+.landing-page .bottom-nav {
+  width: 80%;
+  max-width: 320px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #eaeaea;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 150px;
+}
+
+/* Tlačítka ve spodní navigaci */
+.landing-page .bottom-nav button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  color: #666;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  transition: color 0.3s ease-in-out;
+}
+
+/* Aktivní tlačítko */
+.landing-page .bottom-nav button.active {
   color: #3498db;
-  transform: rotate(45deg);
+}
+
+/* Efekt při najetí myší */
+.landing-page .bottom-nav button:hover {
+  color: #000;
+}
+
+/* Responzivní úpravy */
+@media (max-width: 768px) {
+  .landing-page .landing-header {
+    width: 90%;
+  }
+
+  .landing-page .bottom-nav {
+    width: 90%;
+  }
 }
