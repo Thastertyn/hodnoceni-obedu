@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import '../css/lunch_rating_form.css';
 
-export default function LunchRatingForm({ lunchId, userCredentials }) {
+export default function LunchRatingForm({ onClose, userCredentials, refreshData  }) {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const { mealId, date } = state || {};
+  console.log('Rating form received mealId:', mealId);
+
+  const username =
+      (userCredentials && userCredentials.username) ||
+      localStorage.getItem('username');
+    const password =
+      (userCredentials && userCredentials.password) ||
+      localStorage.getItem('password');
 
   const [taste, setTaste] = useState('');
   const [temperature, setTemperature] = useState('');
@@ -31,24 +41,22 @@ export default function LunchRatingForm({ lunchId, userCredentials }) {
 
   // Submit function
   const handleSubmit = async () => {
-    // Check if we have userCredentials from props
-    if (!userCredentials || !userCredentials.username || !userCredentials.password) {
+    if (!username || !password) {
       setError('Nejste přihlášeni. Přihlaste se prosím znovu.');
-      console.error('User credentials are missing');
+      console.error('User credentials missing');
       return;
     }
-
-    // Validate if all required fields are filled
+  
     if (!taste || !temperature || !portion) {
       setError('Vyplňte prosím alespoň chuť, teplotu a velikost porce.');
       return;
     }
-
+  
     setIsSubmitting(true);
     setError(null);
-
+  
     const formData = {
-      lunch_id: lunchId,
+      lunch_id: mealId,
       taste,
       temperature,
       portion_size: portion,
@@ -57,26 +65,36 @@ export default function LunchRatingForm({ lunchId, userCredentials }) {
       would_pay_more: wouldPayMore,
       feedback,
     };
-
+  
     try {
       const response = await fetch('http://127.0.0.1:8000/lunch/rating', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          'X-USERNAME': userCredentials.username,
-          'X-PASSWORD': userCredentials.password,
+          'X-USERNAME': username,
+          'X-PASSWORD': password,
         },
         body: JSON.stringify(formData),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || `HTTP error! Status: ${response.status}`);
+        throw new Error(
+          errorData.detail || `HTTP error! Status: ${response.status}`
+        );
       }
-
+  
       console.log('Rating submitted successfully');
-      navigate('/'); // Navigate back to the landing page
+  
+      // ✅ Refresh data on LandingPage if function was provided
+      if (typeof refreshData === 'function') {
+        refreshData();
+      }
+  
+      // ✅ Navigate back to LandingPage
+      navigate('/', { replace: true });
+  
     } catch (error) {
       setError(`Chyba při odesílání hodnocení: ${error.message}`);
       console.error('Error submitting rating:', error);
@@ -84,6 +102,8 @@ export default function LunchRatingForm({ lunchId, userCredentials }) {
       setIsSubmitting(false);
     }
   };
+  
+  
 
   return (
     <div className="rating-container">
@@ -233,9 +253,7 @@ export default function LunchRatingForm({ lunchId, userCredentials }) {
           </button>
           <button
             className={getButtonClass(wouldPayMore, 'Nejsem ochoten připlatit')}
-            onClick={() =>
-              toggleSelection(setWouldPayMore, 'Nejsem ochoten připlatit', wouldPayMore)
-            }
+            onClick={() => toggleSelection(setWouldPayMore, 'Nejsem ochoten připlatit', wouldPayMore)}
           >
             Nejsem ochoten připlatit
           </button>
@@ -258,7 +276,7 @@ export default function LunchRatingForm({ lunchId, userCredentials }) {
       </button>
 
       <div className="user-info-display">
-        Přihlášen: {userCredentials?.username}
+        Přihlášen: {username || localStorage.getItem('username')}
       </div>
     </div>
   );
