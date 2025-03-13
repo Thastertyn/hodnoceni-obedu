@@ -230,19 +230,27 @@ export default function LandingPage({ isLoggedIn, userCredentials, onLogout }) {
       {/* If user is NOT logged in, show original layout */}
       {!isLoggedIn && (
         <>
-          <header className="landing-header">
-            <h1>Vítejte v aplikaci,<br/>Hodnocení školních obědů</h1>
-            <p>Vyberte si <strong>oběd</strong> a <strong>ohodnoťte</strong> jej!</p>
-          </header>
-          <div className="logo-container">
-            <img src={logo} alt="logo" className="logo" />
-          </div>
-          <section className="login-prompt">
-            <h2><strong>Přihlaste se</strong> pro hodnocení!</h2>
-            <button className="login-button-redir" onClick={() => navigate('/login')}>
-              Přihlásit se
-            </button>
-          </section>
+          <div className="content">
+             <header className="landing-header">
+               <p>
+                 Vítejte v aplikaci,
+                 <br />
+                 <span>Hodnocení školních obědů</span>
+               </p>
+               <div className="sub-text">
+                 <p>Vyberte si <strong>oběd</strong> a <strong>ohodnoťte</strong> jej!</p>
+               </div>
+             </header>
+             <div className="logo-container">
+               <img src={logo} alt="logo" className="logo" />
+             </div>
+             <section className="login-prompt">
+               <h2><strong>Přihlaste se</strong> pro hodnocení!</h2>
+               <button className="login-button-redir" onClick={() => navigate('/login')}>
+                 Přihlásit se
+               </button>
+             </section>
+            </div>
         </>
       )}
 
