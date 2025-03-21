@@ -6,7 +6,7 @@ from .errors import CrudError
 
 def create_rating(*, session: Session, rating_create: CreateRating, username: str) -> None:
 
-    stmt = select(Rating).where(Rating.username == username and Rating.lunch_id == rating_create.lunch_id)
+    stmt = select(Rating).where((Rating.username == username) & (Rating.lunch_id == rating_create.lunch_id))
     existing_rating = session.execute(stmt).one_or_none()
 
     if existing_rating is not None:

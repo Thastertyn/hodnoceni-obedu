@@ -162,6 +162,7 @@ export default function LandingPage({ isLoggedIn, userCredentials, onLogout }) {
         // [ { lunch: {...}, rating: {...} or null }, ... ]
         const response = await fetch("http://127.0.0.1:8000/lunch/rating", {
           method: "GET",
+          
           headers: {
             "Content-Type": "application/json",
             "X-USERNAME": userCredentials.username,

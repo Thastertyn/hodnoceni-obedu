@@ -10,9 +10,6 @@ app = FastAPI(title="Hodnocení obědů")
 
 logging.basicConfig(level=logging.DEBUG)
 
-# Enable CORS here in the backend:
-# Allow all origins, methods, headers, and credentials
-# Adjust these values (especially allow_origins) to tighten security if desired
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
