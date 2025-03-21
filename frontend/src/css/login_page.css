@@ -1,4 +1,4 @@
-/* Kontejner zabírá celou výšku okna, ale pouze v rámci LoginPage */
+/* Kontejner zabírá celou výšku okna*/
 .login-container {
   display: flex;
   height: 100vh;
@@ -6,7 +6,7 @@
   padding: 0;
 }
 
-/* Levá část (logo, text) pouze pro LoginPage */
+/* Levá část (logo, text)*/
 .login-container .left-section {
   flex: 1;
   background-color: #fff;
@@ -32,7 +32,7 @@
   font-weight: bold;
 }
 
-/* Pravá část (přihlašovací formulář) pouze pro LoginPage */
+/* Pravá část (přihlašovací formulář)*/
 .login-container .right-section {
   flex: 1;
   background-color: #2f3b42;

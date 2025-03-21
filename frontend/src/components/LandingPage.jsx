@@ -256,14 +256,13 @@ export default function LandingPage({ isLoggedIn, userCredentials, onLogout }) {
       {/* If user IS logged in, show the new layout with data from API */}
       {isLoggedIn && (
         <>
-          <div className="user-info">
-            <p>Přihlášen: {userCredentials?.username}</p>
-            <button className="refresh-button" onClick={refreshData} title="Obnovit data">
-              🔄 Obnovit
-            </button>
-          </div>
-          
-          <h2 className="rating-title">Vyberte si oběd a ohodnoťte jej!</h2>
+          <header className="rating-title">
+            <p>
+              Vyberte si oběd a
+              <br />
+              <span>ohodnoťte jej!</span>
+            </p>
+          </header>
 
           {/* Dnešní oběd */}
           <section className="today-meal">
@@ -363,7 +362,7 @@ export default function LandingPage({ isLoggedIn, userCredentials, onLogout }) {
           <span role="img" aria-label="home">🏠</span>
         </button>
         <button onClick={() => (isLoggedIn ? navigate('/rating') : navigate('/login'))}>
-          <span role="img" aria-label="ratings">📊</span>
+          <span role="img" aria-label="ratings">🖊️</span>
         </button>
         <button onClick={() => setShowLogoutModal(true)}>
           <span role="img" aria-label="profile">👤</span>
