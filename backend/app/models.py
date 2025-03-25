@@ -13,10 +13,6 @@ class RatingBase(SQLModel):
     would_pay_more: str = Field(max_length=50, nullable=False)
     feedback: Optional[str] = Field(None, max_length=500, nullable=True)
 
-    model_config = {
-        "from_attributes": True
-    }
-
 
 class RatingCreate(RatingBase):
     pass
