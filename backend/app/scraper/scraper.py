@@ -1,18 +1,17 @@
+import asyncio
+import aiohttp
+import time
+
 from typing import Optional
 import datetime
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 import re
 import logging
-import requests
 
-from bs4 import BeautifulSoup
-from sqlmodel import Session
+from selectolax.parser import HTMLParser
 
-from app.models.user_model import Login
+from app.models import Lunch
 from app.core.security import login
-from app.core.config import settings
-from app.models.lunch_model import LunchCreate
-from app.crud.lunch_crud import create_lunch, CrudError
 
 logger = logging.getLogger(__name__)
 
@@ -29,145 +28,135 @@ MONTH_VIEW_URL = f"{BASE_URL}/faces/secured/main.jsp?terminal=false&keyboard=fal
 MENU_AJAX_URL = f"{BASE_URL}/faces/secured/month.jsp?terminal=false&keyboard=false"
 
 
-def scrape_week_ahead(session: Session):
+async def get_all_days(*, day: date, past: int, future: int, username: str, password: str) -> list[Lunch]:
+    full_start = time.perf_counter()
+    today = date.today()
+    start_date = today - timedelta(days=past)
+    end_date = today + timedelta(days=future)
+
+    workdays = [
+        current_date for i in range((end_date - start_date).days + 1)
+        if (current_date := start_date + timedelta(days=i)).weekday() < 5  # Friday = 4
+    ]
+
+
+
+    async with aiohttp.ClientSession() as session:
+        logging.info("Logging in as %s", username)
+        start = time.perf_counter()
+        await login(username, password, session)
+        logging.info("Login took %ss", time.perf_counter() - start)
+
+        logging.info("Perfoming some kind of request to 2 urls")
+        async with session.get(MONTH_VIEW_URL) as month_view_response:
+            if month_view_response.status != 200:
+                raise ScrapeError(f"Failed to access month view: {month_view_response.status}")
+
+        async with session.get(MENU_AJAX_URL) as menu_page_response:
+            if menu_page_response.status != 200:
+                raise ScrapeError(f"Failed to access menu page: {menu_page_response.status}")
+
+        logging.info("Defining all tasks")
+        
+        tasks = [
+            get_lunch_for_day(session=session, day=day)
+            for day in workdays
+        ]
+        logging.info("Wainting for all tasks to finish")
+        lunches = await asyncio.gather(*tasks)
+
+        logger.info("Full process took %ss", time.perf_counter() - full_start)
+        return [lunch for lunch in lunches if lunch is not None]
+
+
+async def get_lunch_for_day(*, day: date, session: aiohttp.ClientSession) -> Lunch | None:
+    formatted_date = day.strftime("%Y-%m-%d")
+    logging.info("Fetching HTML for day %s", day)
+    start = time.perf_counter()
+    html_content = await scrape(session, formatted_date)
+    logging.info("Fetch took %ss", time.perf_counter() - start)
+
+
     try:
-        credentials = Login(username=settings.CANTEEN_USERNAME, password=settings.CANTEEN_PASSWORD)
+        logger.info("Parsing data for day %s", day)
+        start = time.perf_counter()
+        parsed_lunch = parse_selected_lunch(html_content, day)
+        logging.info("Parse took %ss", time.perf_counter() - start)
 
-        http_session = requests.Session()
-        http_session.headers.update({
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-            "Accept-Language": "cs,en-US;q=0.7,en;q=0.3",
-        })
-
-        login(credentials, http_session)
-
-        today = datetime.today()
-        days_ahead = 0
-
-        while days_ahead < 5:
-            scan_date = today + timedelta(days=days_ahead)
-            if scan_date.weekday() >= 5:
-                days_ahead += 1
-                continue
-
-            formatted_date = scan_date.strftime("%Y-%m-%d")
-
-            try:
-                html_content = scrape(http_session, formatted_date)
-                parsed_menu = parse_menu(html_content, scan_date.date())
-
-                try:
-                    create_lunch(session=session, lunch_create=parsed_menu)
-                except CrudError as e:
-                    logger.warning("Skipping duplicate entry for %s: %s", formatted_date, e)
-
-            except ScrapeError as e:
-                logger.error("Error scraping for %s: %s", formatted_date, e)
-
-            days_ahead += 1
-
-    except ScrapeError as e:
-        logger.critical("Critical error in scraping process: %s", e)
+        return parsed_lunch
+    except ScrapeError:
+        return None
 
 
-def extract_view_state(html_content: str) -> Optional[str]:
-    """Extract ViewState from HTML content."""
-    match = re.search(r'id="j_id__v_0:javax\.faces\.ViewState:1" value="([^"]+)"', html_content)
-    if match:
-        return match.group(1)
-    return None
-
-
-def scrape(session: requests.Session, date_str: str) -> str:
+async def scrape(session: aiohttp.ClientSession, date_str: str) -> str:
     logger.info("Accessing month view")
-    month_view_response = session.get(MONTH_VIEW_URL)
-    if month_view_response.status_code != 200:
-        raise ScrapeError(f"Failed to access month view: {month_view_response.status_code}")
-
-    menu_page_response = session.get(MENU_AJAX_URL)
-    if menu_page_response.status_code != 200:
-        raise ScrapeError(f"Failed to access menu page: {menu_page_response.status_code}")
 
     logger.info("Requesting menu for date: %s", date_str)
-    day_params = {"day": date_str, "status": "true", "keyboard": "false", "printer": "false", "terminal": "false"}
+    day_params = {
+        "day": date_str,
+        "status": "true",
+        "keyboard": "false",
+        "printer": "false",
+        "terminal": "false"
+    }
 
     for referer in [MENU_AJAX_URL, MONTH_VIEW_URL]:
-        day_headers = {"Referer": referer, "Cache-Control": "no-cache", "Pragma": "no-cache"}
-        menu_response = session.get(PER_DAY_URL, params=day_params, headers=day_headers)
-        if menu_response.status_code == 200 and len(menu_response.text.strip()) > 10:
-            return menu_response.text
+        async with session.get(PER_DAY_URL, params=day_params) as menu_response:
+            text = await menu_response.text()
+            if menu_response.status == 200 and len(text.strip()) > 10:
+                return text
 
     raise ScrapeError("All attempts to scrape menu failed")
 
 
-def parse_menu(html_content: str, date_obj: datetime.date) -> LunchCreate:
-    soup = BeautifulSoup(html_content, "html.parser")
-    menu_items = soup.find_all("div", class_="jidelnicekItem")
+def parse_selected_lunch(html_content: str, date_obj: datetime.date) -> Optional[Lunch]:
+    tree = HTMLParser(html_content)
+    menu_items = tree.css("div.jidelnicekItem")
 
     if not menu_items:
-        raise ScrapeError("No menu items found in the scraped content")
+        return None
 
     date_str = date_obj.strftime("%Y-%m-%d")
 
-    main_dishes: list[str] = []
-    lunch_soup = ""
-    lunch_drink = ""
-
     for item in menu_items:
-        lunch_title_span = item.find("span", class_="smallBoldTitle")
-        if not lunch_title_span:
-            continue
-        match = re.search(r'\d+', lunch_title_span.get_text(strip=True))
-        if match:
-            lunch_number = int(match.group())
-        else:
+        # Look for a `.button-link-tick` inside this item
+        if not item.css_first(".button-link-tick"):
             continue
 
+        title_span = item.css_first("span.smallBoldTitle")
+        if not title_span:
+            continue
+
+        match = re.search(r'\d+', title_span.text(strip=True))
+        if not match:
+            continue
+
+        lunch_number = int(match.group())
         center_id = f"menu-{lunch_number - 1}-day-{date_str}"
-        center_div = soup.find("div", id=center_id)
+        center_div = tree.css_first(f"div#{center_id}")
         if not center_div:
             continue
 
-        for sub in center_div.find_all("sub"):
-            sub.decompose()
-        dishes_text = center_div.get_text(separator=" ", strip=True)
+        # Remove all <sub> elements (like in BeautifulSoup)
+        for sub in center_div.css("sub"):
+            sub.remove()
+
+        # Get and process the text
+        dishes_text = center_div.text(separator=" ", strip=True)
         parts = [part.strip() for part in re.split(r'\s*[;,]\s*', dishes_text) if part.strip()]
 
         if len(parts) < 3:
-            continue  # Invalid parsing case
+            continue
 
         soup_item = parts[0]
         drink_item = parts[-1]
-        main_course_item = ", ".join(parts[1:-1])  # Everything between soup and drink is main course
+        main_course_item = ", ".join(parts[1:-1])
 
-        if lunch_soup and lunch_soup != soup_item:
-            lunch_soup += f", {soup_item}"
+        return Lunch(
+            lunch_date=date_obj,
+            main_course=main_course_item,
+            drink=drink_item,
+            soup=soup_item
+        )
 
-        if lunch_drink and lunch_drink != drink_item:
-            lunch_drink += f", {drink_item}"
-
-        if not lunch_soup:
-            lunch_soup = soup_item
-
-        if not lunch_drink:
-            lunch_drink = drink_item
-
-        main_dishes.append(main_course_item)
-
-    first_dish = ""
-    second_dish = ""
-
-    if len(main_dishes) == 2:
-        first_dish = main_dishes[0]
-        second_dish = main_dishes[1]
-
-    lunch = LunchCreate(
-        lunch_date=date_obj,
-        first_option=first_dish,
-        second_option=second_dish,
-        drink=lunch_drink,
-        soup=lunch_soup
-    )
-
-    return lunch
+    return None
