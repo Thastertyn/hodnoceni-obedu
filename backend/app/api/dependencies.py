@@ -6,7 +6,6 @@ from pydantic import SecretStr
 from sqlmodel import Session
 
 from app.core.db import engine
-from app.core.security import login
 
 from app.models import Login
 

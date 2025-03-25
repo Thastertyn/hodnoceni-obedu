@@ -17,9 +17,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include the application routers
 app.include_router(routes.router)
-
-@app.get("/")
-async def root():
-    return {"message": "Hello Hodnocení obědů!"}
