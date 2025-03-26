@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:v="urn:schemas-microsoft-com:vml"
+	xmlns:o="urn:schemas-microsoft-com:office:office"
+>
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<style>
+			body {
+				font-family: "Segoe UI", sans-serif;
+				background-color: #f3f4f6;
+				color: #333;
+				padding: 40px 20px;
+			}
+
+			.container {
+				background-color: #ffffff;
+				border-radius: 10px;
+				padding: 32px;
+				max-width: 600px;
+				margin: auto;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+			}
+
+			h1 {
+				color: #008cba;
+				font-size: 24px;
+				margin-bottom: 8px;
+			}
+
+			h2 {
+				font-size: 18px;
+				margin-top: 32px;
+				margin-bottom: 12px;
+				color: #005f87;
+				font-weight: 600;
+				padding-left: 12px;
+			}
+
+			p {
+				margin-bottom: 16px;
+				margin-left: 12px;
+			}
+
+			ul {
+				list-style: none;
+				padding: 0;
+				margin-bottom: 24px;
+				margin-left: 30px;
+			}
+
+			li {
+				padding: 10px 12px;
+				background-color: #f9fafb;
+				margin-bottom: 8px;
+				border-left: 4px solid #008cba;
+				border-radius: 4px;
+			}
+
+			.footer {
+				font-size: 12px;
+				color: #888;
+				margin-top: 40px;
+				text-align: center;
+				line-height: 1.4;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Děkujeme za hodnocení obědů!</h1>
+			<p style="margin-left: 0px">Váš měsíční přehled je připraven.</p>
+
+			<h2>Vaše aktivita</h2>
+			<p>Celkem bylo ohodnoceno <strong>{{ total }}</strong> obědů.</p>
+			<ul>
+				<li><strong>Vašich hodnocení:</strong> {{ user_total }}</li>
+				<li>
+					<strong>Nejoblíbenější jídlo:</strong> {{ user_most_popular }}
+				</li>
+				<li>
+					<strong>Nejméně oblíbené jídlo:</strong> {{ user_least_popular }}
+				</li>
+			</ul>
+
+			<h2>Statistiky komunity</h2>
+			<p>
+				Hodnocení od <strong>{{ user_count }}</strong> dalších uživatelů.
+			</p>
+			<ul>
+				<li><strong>Top jídlo měsíce:</strong> {{ most_popular }}</li>
+				<li><strong>Propadák měsíce:</strong> {{ least_popular }}</li>
+			</ul>
+
+			<p>Děkujeme, že používáte naši aplikaci. Těšíme se na další měsíc!</p>
+
+			<div class="footer">
+				Tuto zprávu jste obdrželi automaticky.<br />
+				Neodpovídejte prosím na tento email.
+			</div>
+		</div>
+	</body>
+</html>

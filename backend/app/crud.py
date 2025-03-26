@@ -38,3 +38,12 @@ def get_rating_for_day(*, session: Session, day: date, username: str) -> Optiona
     rating = session.execute(stmt).scalar_one_or_none()
 
     return rating
+
+def get_all_users(*, session: Session) -> list[str]:
+    stmt = select(Rating.username).distinct()
+    users = session.execute(stmt).scalars().all()
+
+    return users
+
+def get_rating_statistics(*, session: Session):
+    pass

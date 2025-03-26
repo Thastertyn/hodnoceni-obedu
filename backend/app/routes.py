@@ -1,13 +1,15 @@
 from datetime import date
 from typing import Optional
+from pydantic import EmailStr
 
 from fastapi import APIRouter, Depends, Query, HTTPException, status
 
+
 from app.api.dependencies import require_login, SessionDep
 from app.core import security
+from app.core.config import settings
 from app.models import Login, RatingCreate, LunchData
-from app import crud
-from app import scraper
+from app import crud, scraper, email
 
 router = APIRouter()
 
@@ -54,4 +56,9 @@ async def verify_login(
     credentials: Login = Depends(require_login)
     ) -> bool:
     await security.login(username=credentials.username, password=credentials.password)
+    return True
+
+@router.post("/test-email", include_in_schema=settings.ENVIRONMENT == "local")
+async def send_test_email(to: EmailStr) -> bool:
+    email.send_test_mail(to)
     return True
