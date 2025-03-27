@@ -1,8 +1,10 @@
-from datetime import date
+from datetime import date, timedelta
 from typing import Optional
 
 from sqlmodel import Session, select
-from app.models import RatingCreate, Rating
+from app.models import RatingCreate, Rating, RatingStatistics, UserRatingStatistics, BaseRatingStatistics, RatingBase
+from app.utils import compute_average_rating
+
 
 class CrudError(Exception):
     """Representing generic error during CRUD operations"""
@@ -39,11 +41,20 @@ def get_rating_for_day(*, session: Session, day: date, username: str) -> Optiona
 
     return rating
 
+
 def get_all_users(*, session: Session) -> list[str]:
     stmt = select(Rating.username).distinct()
     users = session.execute(stmt).scalars().all()
 
     return users
 
-def get_rating_statistics(*, session: Session):
-    pass
+
+def get_past_ratings(*, session: Session, day_delta: int = 7) -> RatingStatistics:
+    today = date.today()
+    start_date = today - timedelta(days=day_delta)
+    end_date = today - timedelta(days=1)
+    
+    stmt = select(Rating).where(Rating.lunch_day >= start_date).where(Rating.lunch_day <= end_date)
+    ratings: list[Rating] = session.execute(stmt).scalars().all()
+
+    raise NotImplementedError

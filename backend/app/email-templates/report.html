@@ -60,12 +60,41 @@
 				border-radius: 4px;
 			}
 
+			.weekday-section {
+				margin-top: 12px;
+				margin-left: 12px;
+				padding: 12px;
+				background-color: #f1f5f9;
+				border-left: 4px solid #005f87;
+				border-radius: 6px;
+			}
+
+			.weekday-title {
+				font-weight: 600;
+				color: #004466;
+				margin-bottom: 6px;
+			}
+
+			.rating-details {
+				font-size: 14px;
+				line-height: 1.4;
+				margin-left: 8px;
+			}
+
 			.footer {
 				font-size: 12px;
 				color: #888;
 				margin-top: 40px;
 				text-align: center;
 				line-height: 1.4;
+			}
+			.meal-info {
+				background-color: #e8f1f5;
+				padding: 10px 12px;
+				margin-bottom: 10px;
+				border-left: 4px solid #2b7a78;
+				border-radius: 4px;
+				font-size: 14px;
 			}
 		</style>
 	</head>
@@ -78,22 +107,45 @@
 			<p>Celkem bylo ohodnoceno <strong>{{ total }}</strong> obědů.</p>
 			<ul>
 				<li><strong>Vašich hodnocení:</strong> {{ user_total }}</li>
-				<li>
-					<strong>Nejoblíbenější jídlo:</strong> {{ user_most_popular }}
-				</li>
-				<li>
-					<strong>Nejméně oblíbené jídlo:</strong> {{ user_least_popular }}
-				</li>
 			</ul>
 
-			<h2>Statistiky komunity</h2>
-			<p>
-				Hodnocení od <strong>{{ user_count }}</strong> dalších uživatelů.
-			</p>
-			<ul>
-				<li><strong>Top jídlo měsíce:</strong> {{ most_popular }}</li>
-				<li><strong>Propadák měsíce:</strong> {{ least_popular }}</li>
-			</ul>
+			<h2>Přehled podle dnů</h2>
+
+			{% for day, entry in weekly_data.items() %}
+			<div class="weekday-section">
+				<div class="weekday-title">{{ day }}</div>
+				{% if entry.lunch and entry.rating %}
+
+				<div class="meal-info">
+					<strong>Jídlo:</strong> {{ entry.lunch.main_course }}<br />
+					{% if entry.lunch.soup %}
+					<strong>Polévka:</strong> {{ entry.lunch.soup }}<br />
+					{% endif %} {% if entry.lunch.drink %}
+					<strong>Nápoj:</strong> {{ entry.lunch.drink }}<br />
+					{% endif %}
+				</div>
+
+				<div class="rating-details">
+					<strong>Chuť:</strong> {{ entry.rating.taste.label("taste") }}<br />
+					<strong>Teplota:</strong> {{
+					entry.rating.temperature.label("temperature") }}<br />
+					<strong>Porce:</strong> {{
+					entry.rating.portion_size.label("portion_size") }}<br />
+					<strong>Polévka (hodnocení):</strong> {{
+					entry.rating.soup.label("soup") }}<br />
+					<strong>Dezert:</strong> {{ entry.rating.dessert.label("dessert")
+					}}<br />
+					<strong>Připlatil(a) by:</strong> {{
+					entry.rating.would_pay_more.label("would_pay_more") }}
+				</div>
+
+				{% else %}
+				<div class="rating-details" style="color: #888">
+					Bez záznamu – žádné hodnocení nebo objednávka.
+				</div>
+				{% endif %}
+			</div>
+			{% endfor %}
 
 			<p>Děkujeme, že používáte naši aplikaci. Těšíme se na další měsíc!</p>
 
