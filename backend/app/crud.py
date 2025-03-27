@@ -2,8 +2,7 @@ from datetime import date, timedelta
 from typing import Optional
 
 from sqlmodel import Session, select
-from app.models import RatingCreate, Rating, RatingStatistics, UserRatingStatistics, BaseRatingStatistics, RatingBase
-from app.utils import compute_average_rating
+from app.models import RatingCreate, Rating
 
 
 class CrudError(Exception):
@@ -49,7 +48,7 @@ def get_all_users(*, session: Session) -> list[str]:
     return users
 
 
-def get_past_ratings(*, session: Session, day_delta: int = 7) -> RatingStatistics:
+def get_past_ratings(*, session: Session, day_delta: int = 7) -> list[Rating]:
     today = date.today()
     start_date = today - timedelta(days=day_delta)
     end_date = today - timedelta(days=1)
@@ -57,4 +56,4 @@ def get_past_ratings(*, session: Session, day_delta: int = 7) -> RatingStatistic
     stmt = select(Rating).where(Rating.lunch_day >= start_date).where(Rating.lunch_day <= end_date)
     ratings: list[Rating] = session.execute(stmt).scalars().all()
 
-    raise NotImplementedError
+    return ratings

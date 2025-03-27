@@ -8,9 +8,7 @@ from pathlib import Path
 from app.core.config import settings
 from app import crud
 from app.api.dependencies import get_db
-from app.models import Lunch, RatingPublic, QualityRating, LunchEntry
-
-locale.setlocale(locale.LC_TIME, "cs_CZ.UTF-8")
+from app.models import Lunch, LunchEntry, QualityRating, RatingPublic
 
 
 def get_email_template(*, template_name: str, context: dict[str, Any]) -> str:
@@ -24,10 +22,42 @@ def get_email_template(*, template_name: str, context: dict[str, Any]) -> str:
 def send_monthly_report():
     with next(get_db()) as session:
 
-        ratings = crud.get_rating_statistics(session=session)
+        # ratings = crud.get_past_ratings(session=session)
 
-
-        mail_template = get_email_template(template_name="report.html", context=ratings.dict())
+        mail_template = get_email_template(template_name="report.html", context={
+            "total": 4,
+            "user_total": 3,
+            "user_count": 2,
+            "weekly_data": {
+                "Pondělí": LunchEntry(
+                    lunch=None,
+                    rating=None  # No lunch ordered
+                ),
+                "Úterý": LunchEntry(
+                    lunch=None,
+                    rating=None  # No lunch ordered
+                ),
+                "Středa": LunchEntry(
+                    lunch=None,
+                    rating=None  # Lunch ordered, but not rated
+                ),
+                "Čtvrtek": LunchEntry(
+                    lunch=Lunch(main_course="Bratislavská vepřová plec, houskové knedlíky", soup="Polévka rybí s pohankou", drink="voda se sirupem a mátou"),
+                    rating=RatingPublic(
+                        taste=QualityRating.OKAY,
+                        temperature=QualityRating.GOOD,
+                        portion_size=QualityRating.OKAY,
+                        soup=QualityRating.GOOD,
+                        dessert=QualityRating.OKAY,
+                        would_pay_more=QualityRating.GOOD
+                    )
+                ),
+                "Pátek": LunchEntry(
+                    lunch=None,
+                    rating=None
+                )
+            }
+        })
         all_users = crud.get_all_users(session=session)
 
         for user in all_users:

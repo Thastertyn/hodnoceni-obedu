@@ -72,9 +72,6 @@ class AverageRating(BaseModel):
     would_pay_more: QualityRating
 
 
-
-
-
 class RatingCreate(RatingBase):
     pass
 
@@ -106,6 +103,9 @@ class LunchEntry(BaseModel):
 
 
 class LunchData(RootModel[dict[date, LunchEntry]]):
+    pass
+
+class RatingData(RootModel[dict[str, LunchEntry]]):
     pass
 
 class BaseRatingStatistics(BaseModel):
