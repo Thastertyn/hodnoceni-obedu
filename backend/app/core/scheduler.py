@@ -7,7 +7,7 @@ scheduler = AsyncIOScheduler()
 def start_scheduler():
     scheduler.add_job(
         send_monthly_report,
-        CronTrigger(day_of_week="mon", hour=6),
+        CronTrigger(second=0, minute="*"),
         id="monthly_report_job",
         replace_existing=True
     )

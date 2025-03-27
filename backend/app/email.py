@@ -1,3 +1,4 @@
+import locale
 from typing import Any
 import emails
 
@@ -7,6 +8,9 @@ from pathlib import Path
 from app.core.config import settings
 from app import crud
 from app.api.dependencies import get_db
+from app.models import Lunch, RatingPublic, QualityRating, LunchEntry
+
+locale.setlocale(locale.LC_TIME, "cs_CZ.UTF-8")
 
 
 def get_email_template(*, template_name: str, context: dict[str, Any]) -> str:
@@ -20,15 +24,10 @@ def get_email_template(*, template_name: str, context: dict[str, Any]) -> str:
 def send_monthly_report():
     with next(get_db()) as session:
 
-        mail_template = get_email_template(template_name="report.html", context={
-            "total": 5,
-            "user_total": 5,
-            "user_most_popular": 5,
-            "user_least_popular": 5,
-            "user_count": 5,
-            "most_popular": 5,
-            "least_popular": 5,
-        })
+        ratings = crud.get_rating_statistics(session=session)
+
+
+        mail_template = get_email_template(template_name="report.html", context=ratings.dict())
         all_users = crud.get_all_users(session=session)
 
         for user in all_users:
