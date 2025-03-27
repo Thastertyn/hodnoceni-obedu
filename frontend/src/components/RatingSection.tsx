@@ -1,30 +1,37 @@
-interface RatingSectionProps {
+interface RatingOption {
+	key: string;
+	label: string;
+ }
+ 
+ interface RatingSectionProps {
 	title: string;
-	options: string[];
+	options: RatingOption[];
 	selected: string;
 	onSelect: (value: string) => void;
-}
-
-const getButtonClass = (selected: string, value: string) =>
-	selected === value ? "button selected" : "button";
-
-export default function RatingSection({
+ }
+ 
+ const getButtonClass = (selected: string, key: string) =>
+	selected === key ? 'button selected' : 'button';
+ 
+ export default function RatingSection({
 	title,
 	options,
 	selected,
 	onSelect,
-}: RatingSectionProps) {
+ }: RatingSectionProps) {
 	return (
-		<div className="section">
-			<h3>{title}</h3>
-			{options.map((option) => (
-				<button
-					key={option}
-					className={getButtonClass(selected, option)}
-					onClick={() => onSelect(option)}>
-					{option}
-				</button>
-			))}
-		</div>
+	   <div className="section">
+		  <h3>{title}</h3>
+		  {options.map(({ key, label }) => (
+			 <button
+				key={key}
+				className={getButtonClass(selected, key)}
+				onClick={() => onSelect(key)}
+			 >
+				{label}
+			 </button>
+		  ))}
+	   </div>
 	);
-}
+ }
+ 

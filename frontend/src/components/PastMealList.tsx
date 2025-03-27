@@ -53,12 +53,20 @@ export function PastMealsList({
 									navigate("/rating", { state: { date } });
 								}
 							}}
-							style={{ cursor: (isRated || !isOrdered) ? "default" : "pointer" }}>
-							<span
-								className="status"
-								style={{ color: isRated ? "green" : "red" }}>
-								{isRated ? "Hodnoceno" : "Nehodnoceno"}
-							</span>
+							style={{
+								cursor: isRated || !isOrdered ? "default" : "pointer",
+							}}
+						>
+							{isOrdered && (
+								<span
+									className="status"
+									style={{ color: isRated ? "green" : "red" }}
+								>
+									{isRated ? "Hodnoceno" : "Nehodnoceno"}
+								</span>
+							) || (
+								<span className="status">&nbsp;</span>
+							)}
 							<p>
 								<strong>Oběd: {mainCourse}</strong>
 							</p>

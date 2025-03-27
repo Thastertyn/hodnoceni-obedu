@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../css/lunch_rating_form.css';
 import RatingSection from '../components/RatingSection';
-import { UserCredentials } from '../types';
+import { UserCredentials, RATING_LABELS } from '../types';
 
 type Props = {
    onClose?: () => void;
@@ -16,6 +16,13 @@ const toggleSelection = (
    setState: (val: string) => void
 ) => {
    setState(currentValue === newValue ? '' : newValue);
+};
+
+const invertMapping = (mapping: Record<number, string>) => {
+   return Object.entries(mapping).map(([key, label]) => ({
+      key,
+      label,
+   }));
 };
 
 export default function LunchRatingForm({
@@ -58,17 +65,17 @@ export default function LunchRatingForm({
 
       const formData = {
          lunch_id: mealId,
-         taste,
-         temperature,
-         portion_size: portion,
-         soup,
-         dessert,
-         would_pay_more: wouldPayMore,
+         taste: parseInt(taste),
+         temperature: parseInt(temperature),
+         portion_size: parseInt(portion),
+         soup: soup !== '' ? parseInt(soup) : null,
+         dessert: dessert !== '' ? parseInt(dessert) : null,
+         would_pay_more: wouldPayMore !== '' ? parseInt(wouldPayMore) : null,
          feedback,
       };
 
       try {
-         const response = await fetch('http://127.0.0.1:8000/lunch/rating', {
+         const response = await fetch(`http://127.0.0.1:8000/lunch/${date}/rate`, {
             method: 'POST',
             headers: {
                Accept: 'application/json',
@@ -109,41 +116,37 @@ export default function LunchRatingForm({
          <div className="sections-container">
             <RatingSection
                title="Polévka"
-               options={['Bez polévky', 'Dobrá', 'Průměrná', 'Špatná']}
+               options={invertMapping(RATING_LABELS.soup)}
                selected={soup}
                onSelect={(val) => toggleSelection(soup, val, setSoup)}
             />
             <RatingSection
                title="Dezert"
-               options={['Bez dezertu', 'Dobrá', 'Průměrná', 'Špatná']}
+               options={invertMapping(RATING_LABELS.dessert)}
                selected={dessert}
                onSelect={(val) => toggleSelection(dessert, val, setDessert)}
             />
             <RatingSection
                title="Chuť jídla"
-               options={['Vynikající', 'Průměrné', 'Mizerné']}
+               options={invertMapping(RATING_LABELS.taste)}
                selected={taste}
                onSelect={(val) => toggleSelection(taste, val, setTaste)}
             />
             <RatingSection
                title="Teplota"
-               options={['Studené', 'Akorát', 'Horké']}
+               options={invertMapping(RATING_LABELS.temperature)}
                selected={temperature}
                onSelect={(val) => toggleSelection(temperature, val, setTemperature)}
             />
             <RatingSection
                title="Porce"
-               options={['Hlad', 'Akorát', 'Přejedl']}
+               options={invertMapping(RATING_LABELS.portion_size)}
                selected={portion}
                onSelect={(val) => toggleSelection(portion, val, setPortion)}
             />
             <RatingSection
                title="Příplatek"
-               options={[
-                  '6Kč - větší porce',
-                  '10Kč - dezert',
-                  'Nejsem ochoten připlatit',
-               ]}
+               options={invertMapping(RATING_LABELS.would_pay_more)}
                selected={wouldPayMore}
                onSelect={(val) => toggleSelection(wouldPayMore, val, setWouldPayMore)}
             />
