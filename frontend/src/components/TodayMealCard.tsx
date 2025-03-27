@@ -18,6 +18,7 @@ export function TodayMealCard({
 	const navigate = useNavigate();
 
 	const isOrdered = todayMeal?.main_course !== undefined;
+	const today = new Date().toISOString().split("T")[0];
 
 	return (
 		<section className="today-meal">
@@ -47,7 +48,7 @@ export function TodayMealCard({
 							isOrdered &&
 							navigate("/rating", {
 								state: {
-									date: todayMeal.lunch_date,
+									date: today,
 								},
 							})
 						}

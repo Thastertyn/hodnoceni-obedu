@@ -31,7 +31,6 @@ export default function LandingPage({
 	const openLogoutModal = () => setShowLogoutModal(true);
 	const closeLogoutModal = () => setShowLogoutModal(false);
 
-	console.log("Today meal ", todayMeal)
 	return (
 		<div className="landing-page">
 			{!isLoggedIn && <GuestLanding />}
