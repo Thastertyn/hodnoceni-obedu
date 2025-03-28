@@ -106,7 +106,7 @@ export default function LunchRatingForm({
    return (
       <div className="rating-container">
          <div className="form-header">
-            <button className="close-button" onClick={onClose || (() => navigate('/'))}>
+            <button className="close-button" onClick={(() => navigate('/'))}>
                ×
             </button>
          </div>
