@@ -8,9 +8,9 @@ from app.core.scheduler import start_scheduler
 
 app = FastAPI(title="Hodnocení obědů")
 
-# @app.on_event("startup")
-# async def startup_event():
-#     start_scheduler()
+@app.on_event("startup")
+async def startup_event():
+    start_scheduler()
 
 logging.basicConfig(level=logging.DEBUG)
 
