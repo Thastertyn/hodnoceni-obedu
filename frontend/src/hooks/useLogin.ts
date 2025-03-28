@@ -1,5 +1,5 @@
-// hooks/useLogin.ts
 import { useState } from "react";
+import { API_HOST } from "../config";
 
 type OnSuccessFn = (username: string, password: string) => void;
 
@@ -26,7 +26,7 @@ export function useLogin(onSuccess: OnSuccessFn): UseLoginResult {
 		setError("");
 
 		try {
-			const response = await fetch("http://127.0.0.1:8000/verify-login", {
+			const response = await fetch(`${API_HOST}/verify-login`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

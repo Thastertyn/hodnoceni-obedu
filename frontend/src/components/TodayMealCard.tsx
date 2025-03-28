@@ -1,29 +1,33 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Lunch } from "../types";
+import { Lunch, LunchEntry } from "../types";
 
 interface TodayMealCardProps {
-	todayMeal: Lunch | null;
+	lunchEntry: LunchEntry | null;
 	loading: boolean;
 	error: string | null;
 	refresh: () => void;
 }
 
 export function TodayMealCard({
-	todayMeal,
+	lunchEntry,
 	loading,
 	error,
 	refresh,
 }: TodayMealCardProps) {
 	const navigate = useNavigate();
 
+	const todayMeal = lunchEntry?.lunch;
 	const isOrdered = todayMeal?.main_course !== undefined;
+	const isRated = lunchEntry?.rating !== null;
 	const today = new Date().toISOString().split("T")[0];
 
 	return (
 		<section className="today-meal">
 			<h3 style={{ color: "black" }}>Dnešní oběd</h3>
-			{loading && <p className="loading-message">Načítání dnešního oběda...</p>}
+			{loading && (
+				<p className="loading-message">Načítání dnešního oběda...</p>
+			)}
 
 			{todayMeal === null && (
 				<div className="error-container">
@@ -56,9 +60,14 @@ export function TodayMealCard({
 							cursor: isOrdered ? "pointer" : "default",
 						}}
 					>
-						<span className="status" style={{ color: "red" }}>
-							Nehodnoceno
-						</span>
+						{(isOrdered && (
+							<span
+								className="status"
+								style={{ color: isRated ? "green" : "red" }}
+							>
+								{isRated ? "Hodnoceno" : "Nehodnoceno"}
+							</span>
+						)) || <span className="status">&nbsp;</span>}
 						<p>
 							<strong>Polévka:</strong> {todayMeal.soup}
 						</p>

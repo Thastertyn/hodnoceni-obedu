@@ -2,8 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import {
 	Lunch,
 	LunchData,
+	LunchEntry,
 	UserCredentials,
 } from "../types";
+import { API_HOST } from "../config";
 
 interface UseLunchOptions {
 	past?: number;
@@ -18,13 +20,13 @@ export function useLunch(
 	userCredentials: UserCredentials | null,
 	{ past = 7, future = 0 }: UseLunchOptions = {}
 ): {
-	todayMeal: Lunch | null;
+	todayMeal: LunchEntry | null;
 	pastLunches: LunchData;
 	loading: boolean;
 	error: string | null;
 	refresh: () => void;
 } {
-	const [todayMeal, setTodayMeal] = useState<Lunch | null>(null);
+	const [todayMeal, setTodayMeal] = useState<LunchEntry | null>(null);
 	const [pastLunches, setPastLunches] = useState<LunchData>({});
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -33,7 +35,7 @@ export function useLunch(
 		const todayStr = getCurrentDateString();
 		const todayEntry = data[todayStr];
 
-		setTodayMeal(todayEntry?.lunch ?? null);
+		setTodayMeal(todayEntry ?? null);
 
 		const past = Object.entries(data)
 			.filter(
@@ -55,7 +57,7 @@ export function useLunch(
 		try {
 			setLoading(true);
 
-			const url = `http://127.0.0.1:8000/lunch?day=${todayStr}&past=${past}&future=${future}`;
+			const url = `${API_HOST}/lunch?day=${todayStr}&past=${past}&future=${future}`;
 
 			const response = await fetch(url, {
 				method: "GET",

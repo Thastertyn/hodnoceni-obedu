@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import '../css/lunch_rating_form.css';
 import RatingSection from '../components/RatingSection';
 import { UserCredentials, RATING_LABELS } from '../types';
+import { API_HOST } from '../config';
 
 type Props = {
    onClose?: () => void;
@@ -75,7 +76,7 @@ export default function LunchRatingForm({
       };
 
       try {
-         const response = await fetch(`http://127.0.0.1:8000/lunch/${date}/rate`, {
+         const response = await fetch(`${API_HOST}/lunch/${date}/rate`, {
             method: 'POST',
             headers: {
                Accept: 'application/json',

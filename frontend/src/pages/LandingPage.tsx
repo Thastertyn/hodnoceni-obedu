@@ -47,7 +47,7 @@ export default function LandingPage({
 					</header>
 
 					<TodayMealCard
-						todayMeal={todayMeal}
+						lunchEntry={todayMeal}
 						loading={loading}
 						error={error}
 						refresh={refresh}
