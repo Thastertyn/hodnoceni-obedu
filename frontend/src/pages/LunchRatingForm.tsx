@@ -33,7 +33,11 @@ export default function LunchRatingForm({
 }: Props) {
    const navigate = useNavigate();
    const { state } = useLocation();
-   const { mealId, date } = (state as { mealId: string; date: string }) || {};
+   let { mealId, date } = (state as { mealId: string; date: string }) || {};
+
+   if(!date) {
+      date = new Date().toISOString().split("T")[0];
+   }
 
    const username =
       userCredentials?.username || localStorage.getItem('username') || '';
